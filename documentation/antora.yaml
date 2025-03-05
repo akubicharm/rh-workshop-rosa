@@ -1,0 +1,5 @@
+name: akubi-project
+version: ~
+title: AKUBI's Sample Project
+nav:
+- modules/ROOT/nav.adoc

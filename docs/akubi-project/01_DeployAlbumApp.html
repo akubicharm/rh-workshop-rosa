@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>OpenShift Sandbox を使ってみよう :: OpenShiftを使ってみよう</title>
+    <link rel="canonical" href="https://akubicharm.github.io/akubi-project/akubi-project/01_DeployAlbumApp.html">
+    <meta name="generator" content="Antora 3.1.10">
+    <link rel="stylesheet" href="../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () { 
+      const urlParams = new URLSearchParams(window.location.search);
+      const userId = urlParams.get('USERID');
+      const subDomain = urlParams.get('SUBDOMAIN');
+      const tomcatIP = urlParams.get('TOMCATIP');
+      if (userId) {
+        showUserId( userId );
+      }
+      else {
+        showUserIdForm();
+      }
+    } );
+
+
+    function showUserId( userId ) {
+      document.getElementById('navbar-form-empty').style.display = "none";
+      document.getElementById('navbar-form-filled').style.display = "flex";
+      document.getElementById('username').textContent = userId;
+      document.getElementById('subDomain').value = subDomain;
+      document.getElementById('tomcatIP').value = tomcatIP;
+
+    }
+
+    function showUserIdForm( userId ) {
+      document.getElementById('navbar-form-empty').style.display = "flex";
+      document.getElementById('navbar-form-filled').style.display = "none";
+    }
+
+    function goWithUserId() {
+      elUserIdInput = document.getElementById('userId');
+      elSubDomainInput = document.getElementById('subDomain');
+      elTomcatIPInput = document.getElementById('tomcatIP');
+
+      window.location.search = ('&USERID=' + elUserIdInput.value + '&SUBDOMAIN=' + elSubDomainInput.value + '&TOMCATIP=' + elTomcatIPInput.value);
+    }
+
+  </script>
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com/en/products/runtimes" target="_blank"><img
+          src="../_/img/octacatkay.png" height="40px" alt="Red Hat Runtimes"></a>
+      <a class="navbar-item" href="https://akubicharm.github.io/akubi-project" style="color: white;"><h3>OpenShiftを使ってみよう</h3></a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://developers.redhat.com/developer-sandbox" target="_blank">Developer Sandbox</a>
+        <div class="navbar-item" id="navbar-form-empty">
+          <span class="navbar-text" style="margin-left: 1rem;">Your Workshop Environment</span>
+          <span class="navbar-text" style="margin-left: 1rem; margin-right: 1rem;">&nbsp;<i style="color: orange;"
+              class="fa fa-exclamation-triangle" aria-hidden="true"></i></span>
+
+          <form action="javascript:void(0);" onsubmit="goWithUserId();">
+            <div class="navbar-item" id="navbar-form-project-filled" style="display: none;">
+              <span class="navbar-text" style="margin-left: 1rem; margin-right: 1rem;">|</span>
+            </div>
+            <input size="40" id="userId" type="text" placeholder="Enter USER ID">
+            <input type="hidden" id="subDomain" name="subDomain" value="">
+            <input type="hidden" id="tomcatIP" name="tomcatIP" value="">
+          </form>
+        </div>
+        
+        <div class="navbar-item" id="navbar-form-filled" style="display: none;">
+          <span class="navbar-text" style="margin-left: 1rem;">Your Workshop Environment</span>
+          <span class="navbar-text" style="margin-left: 1rem; margin-right: 1rem;">|</span>
+          <span class="navbar-text" id="username"></span>
+          <span class="navbar-text" style="margin-left: 1rem; margin-right: 1rem;">&nbsp;<i onclick="recycle();" style="color: green;" class="fa fa-recycle" aria-hidden="true"></i></span>
+        </div>
+
+    </div>
+  </nav>
+</header><div class="body">
+<div class="nav-container" data-component="akubi-project" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html" class=" query-params-link">AKUBI&#x27;s Sample Project</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="01_DeployAlbumApp.html">OpenShift Sandbox を使ってみよう</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">AKUBI's Sample Project</a></li>
+    <li><a href="01_DeployAlbumApp.html">OpenShift Sandbox を使ってみよう</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///Users/kay/Github/akubicharm/wip/./content/modules/ROOT/pages/01_DeployAlbumApp.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">OpenShift Sandbox を使ってみよう</h1>
+<div class="sect1">
+<h2 id="_ゴール"><a class="anchor" href="#_ゴール"></a>ゴール</h2>
+<div class="sectionbody">
+
+</div>
+</div>
+<div class="sect1">
+<h2 id="_準備"><a class="anchor" href="#_準備"></a>準備</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Red Hat Developerのサイトで、Red Hat Acountが登録してください。</p>
+</div>
+<div class="paragraph">
+<p>Red Hat Developerのアカウント名を画面上部のテキストフィールドに入力してください。ワークショップのコンテンツにRed Hat Developerのアカウント名が反映されます。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/enter_your_workshop_env.png" alt="Red Hat DeveloperのIDを入力">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_step1_サンドボックスの開始"><a class="anchor" href="#_step1_サンドボックスの開始"></a>Step1: サンドボックスの開始</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><a href="https://developers.redhat.com/developer-sandbox" class="bare">https://developers.redhat.com/developer-sandbox</a> にアクセスして「Start your sandbox for free」をクリック</p>
+</li>
+<li>
+<p>「Log in to your Red Hat account」の画面で、Red Hatアカウントでログイン</p>
+</li>
+<li>
+<p>Red Hat Hybrid Cloud Console画面で、Red Had OpenShiftの「Launch」ボタンをクリック</p>
+</li>
+<li>
+<p>Log in with … の画面で「DevSandbox」をクリック。OpenShiftのポータル画面が表示される</p>
+</li>
+<li>
+<p>自分の「%USERID%-dev」というネームスペースにアクセス</p>
+</li>
+</ol>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>管理者ビューでは「%USERID%-dev」と「openshift-virtualization-os-images」いうネームスペースが表示されます。開発者ビューでは「%USERID%-dev」だけが表示されます。
+sandbox環境では、新しいネームスペースを作成することはできません。</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_step2_album_api_アプリケーションのデプロイ"><a class="anchor" href="#_step2_album_api_アプリケーションのデプロイ"></a>Step2. Album API アプリケーションのデプロイ</h2>
+<div class="sectionbody">
+<div class="imageblock">
+<div class="content">
+<img src="_images/app_structure_albumapi.png" alt="アプリケーションの構成">
+</div>
+</div>
+<div class="paragraph">
+<p>このステップではコンテナイメージを指定して、バックエンドのアプリケーションをデプロイします。</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>左Paneのプルダウンメニューで「開発者」を選択</p>
+</li>
+<li>
+<p>左Paneの「＋追加」をクリック</p>
+</li>
+<li>
+<p>右Paneをスクロールして「コンテナイメージ」をクリック</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/add_container_app.png" alt="コンテナイメージ指定でアプリケーションのデプロイを開始">
+</div>
+</div>
+</li>
+<li>
+<p>イメージセクションの「外部レジストリーからのイメージ名」を選択し、イメージのURL「quay.io/keomizo_redhat/albumapi-javascript」を入力</p>
+<div class="paragraph">
+<p>※URLのチェックが終わると「検証済み」となる</p>
+</div>
+</li>
+<li>
+<p>一般セクションはデフォルトのまま</p>
+</li>
+<li>
+<p>デプロイセクションのリソースタイプのプルダウンメニューで「Deployment」を選択</p>
+</li>
+<li>
+<p>詳細オプションセクションのターゲットポートが「8080」となっていることを確認</p>
+</li>
+<li>
+<p>「routeの作成」のチェックボックスをチェック</p>
+</li>
+<li>
+<p>画面下部の「作成」ボタンをクリック</p>
+</li>
+<li>
+<p>トポロジービューでアプケーションがデプロイされていることを確認（青線ならばOK）</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/add_container_app_success.png" alt="コンテナイメージ指定でアプリケーションのデプロイ成功">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_step3_rest_api呼び出しの確認"><a class="anchor" href="#_step3_rest_api呼び出しの確認"></a>Step3. REST API呼び出しの確認</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>トポロジー表示画面の右PaneでURLを開くボタンをクリック</p>
+</li>
+<li>
+<p>ブラウザにJSONの文字列が表示されることを確認</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{"message":"Call the /albums route to retrieve a list of albums"}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>ブラウザのURLの後ろに /albums を追記して、アルバム一覧のJSONメッセージが返ってくることを確認</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">[
+    {
+        "id": 1,
+        "title": "You, Me and an App ID",
+        "artist": "Daprize",
+        "price": 56.99,
+        "image_url": "https://aka.ms/albums-daprlogo"
+    },
+    {
+        "id": 2,
+        "title": "Seven Revision Army",
+        "artist": "The Blue-Green Stripes",
+        "price": 17.99,
+        "image_url": "https://aka.ms/albums-containerappslogo"
+    },
+    {
+        "id": 3,
+        "title": "Scale It Up",
+        "artist": "KEDA Club",
+        "price": 39.99,
+        "image_url": "https://aka.ms/albums-kedalogo"
+    },
+    {
+        "id": 4,
+        "title": "Lost in Translation",
+        "artist": "MegaDNS",
+        "price": 39.99,
+        "image_url": "https://aka.ms/albums-envoylogo"
+    },
+    {
+        "id": 5,
+        "title": "Lock Down your Love",
+        "artist": "V is for VNET",
+        "price": 39.99,
+        "image_url": "https://aka.ms/albums-vnetlogo"
+    },
+    {
+        "id": 6,
+        "title": "Sweet Container O' Mine",
+        "artist": "Guns N Probeses",
+        "price": 39.99,
+        "image_url": "https://aka.ms/albums-containerappslogo"
+    }
+]</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_step4_album_uiアプリケーションのデプロイ"><a class="anchor" href="#_step4_album_uiアプリケーションのデプロイ"></a>Step4. Album UIアプリケーションのデプロイ</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>このステップでは、Album UIアプリケーションのGitリポジトリを指定してアプリケーションをデプロイします。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/app_structure_albumui.png" alt="アプリケーションの構成">
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>プルダウンメニューで「開発者」モードを選択</p>
+</li>
+<li>
+<p>左Paneの「＋追加」をクリック</p>
+</li>
+<li>
+<p>右Paneをスクロールして「Gitリポジトリ」をクリック</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/add_albumui_app.png" alt="Gitリポジトリ指定でアプリケーションのデプロイを開始">
+</div>
+</div>
+</li>
+<li>
+<p>Gitリポジトリの情報を入力</p>
+</li>
+<li>
+<p>Builder Imageとしてnode.jsが選択されていることを確認</p>
+</li>
+<li>
+<p>アプリケーションプルダウンで「アプリケーションの作成」を選択</p>
+</li>
+<li>
+<p>アプリケーション名に「albumui」を入力</p>
+</li>
+<li>
+<p>名前は変更せずそのまま</p>
+</li>
+<li>
+<p>リソースタイプのプルダウンで「Deployment」を選択</p>
+</li>
+<li>
+<p>詳細オプションセクションのターゲットポートに「8080」となっていることを確認</p>
+</li>
+<li>
+<p>「routeの作成」のチェックボックスをチェック</p>
+</li>
+<li>
+<p>画面下部の「作成」ボタンをクリック</p>
+</li>
+<li>
+<p>トポロジービューでアプケーションがデプロイされていることを確認（青線ならばOK）</p>
+</li>
+<li>
+<p>URLを開くボタンをクリック</p>
+</li>
+<li>
+<p>「Unable to communicate with server」と画面に表示されることを確認</p>
+</li>
+</ol>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>この段階では、Album UIアプリから呼び出すREST APIのURLが設定されていないので、サーバに接続できないというエラーになる。</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_step5_album_uiとalbum_apiの連携"><a class="anchor" href="#_step5_album_uiとalbum_apiの連携"></a>Step5. Album UIとAlbum APIの連携</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>このステップではAlbum UIのバックエンドのURLにAlbum APIのURLを設定して、連携できるようにします。</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>トポロジービューでalbum-scriptをクリック</p>
+</li>
+<li>
+<p>右Paneに表示されたServiceを確認</p>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">名前</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">albumapi-javascript</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ポート</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8080</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>トポロジービューでcontainer-albumuiのDeploymentをクリック</p>
+</li>
+<li>
+<p>右Pane上部のアクションプルダウンメニューで「Deploymentの編集」をクリック</p>
+</li>
+<li>
+<p>デプロイメントの編集画面で「フォームビュー」をクリック</p>
+</li>
+<li>
+<p>環境変数にバックエンドのURLを指定</p>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">名前</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API_BASE_URL</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">値</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://albumapi-javascript:8080" class="bare">http://albumapi-javascript:8080</a></p></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>「保存」ボタンをクリック</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_step6_album_ui_と_album_apiの連携を確認"><a class="anchor" href="#_step6_album_ui_と_album_apiの連携を確認"></a>Step6. Album UI と Album APIの連携を確認</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>URLを開くボタンをクリック</p>
+</li>
+<li>
+<p>アルバムの一覧が画面に表示されることを確認</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

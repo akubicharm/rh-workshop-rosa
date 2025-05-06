@@ -1,0 +1,63 @@
+= OpenShiftコンソールでのログ確認
+:navtitle: rosa-log-02
+include::_attributes.adoc[]
+
+== 演習の概要
+このモジュールでは、OpenShiftのコンソールでのログ集約を確認します。
+
+---
+
+=== OpenShiftコンソールでのログ確認
+
+OpenShiftコンソールでのログ集約を確認します。管理者アカウント( `cluster-admin` など)でログインして、左サイドメニューの「モニタリング」→「Logs」から確認できます。
+
+NOTE: 本演習をワークショップ形式で実施している場合、インストラクターが管理者アカウントを案内します。
+
+image::rosa/log-02/console-logs.png[]
+
+表示されたログについて、様々なフィルタリング(ネームスペースやコンテナ単位など)ができるので、色々試してみてください。
+
+=== ローカルユーザーに対するログ集約の参照権限付与
+
+ローカルユーザーは自分が作ったコンテナアプリケーションのログを、Pod単位で見ることができます。
+
+image::rosa/log-02/pod-logs.png[]
+
+ただし、デフォルトだと、プロジェクト単位でのログ集約を確認するための権限がローカルユーザーに無いため、下記のようなメッセージが表示されてしまいます。
+
+image::rosa/log-02/forbidden.png[]
+
+そこで、管理者アカウントでローカルユーザーに対するログ集約の参照権限を付与してみます。
+
+管理者アカウントで再ログインして、OpenShiftコンソール右上の「+」ボタンから以下のYAMLをインポートします。このYAMLでは `view-application-logs` というRoleBindingリソースを `test-project20` プロジェクトに作っています。
+
+ユーザーとして `testuser20` も指定しているので `testuser20` ユーザーが `test-project20` プロジェクト上に作られたアプリケーションに関するログ集約を、OpenShiftコンソール上で見れるようになります。
+
+NOTE: このYAMLの `testuser20` と `test-project20` については、自分が使っているユーザー名とプロジェクト名に適宜変更してください。
+
+[.console-input]
+[source,sh]
+----
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: view-application-logs
+  namespace: test-project20
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-logging-application-view
+subjects:
+- kind: User
+  name: testuser20
+  apiGroup: rbac.authorization.k8s.io
+----
+
+image::rosa/log-02/rolebinding.png[]
+
+RoleBindingリソースを作成したあとに `testuser20` ユーザーで再ログインしてみると、`test-project20` プロジェクトで作成されたアプリケーションに関するログ集約を確認できます。
+
+image::rosa/log-02/localuser-logging.png[]
+
+ログ集約については、他のアプリケーションをデプロイすることでも確認してみることができます。
+色々試してみてください。

@@ -1,0 +1,245 @@
+= ROSA HCPクラスターの更新
+:navtitle: rosa-upgrade
+include::_attributes.adoc[]
+
+== 演習の概要
+このモジュールでは、ROSA HCPクラスターの更新を実行します。
+
+---
+
+ROSA HCPクラスターは、コントロールプレーンとワーカーノードから構成されており、
+この2つは、個別に更新されます。
+最初にコントロールプレーンを更新して、次にワーカーノードをMachinepool単位で更新していきます。
+更新方法は、SingleAZ/MultiAZ構成の共に同じものとなります。
+
+ここでは、OCMとROSA CLIを利用した更新方法をご紹介します。
+
+NOTE: 本演習をワークショップ形式で実施している場合、
+「ROSA CLIを利用したワーカーノードの更新」以外の項目を実施できません。
+これらの項目については、インストラクターによる紹介のみとなります。
+
+
+=== OCMを利用したコントロールプレーンの更新
+
+https://access.redhat.com/documentation/ja-jp/red_hat_openshift_service_on_aws/4/html-single/red_hat_openshift_cluster_manager/index[OpenShift Cluster Manager (OCM)]を利用して、
+ROSA HCPクラスターを手動で更新できます。ROSAの場合、通常のOpenShiftとは異なり、
+OpenShiftのWebコンソールとCLI(ocコマンド)によるアップグレードができないようになっています。
+そのため、OCMや後述するROSA CLIによるアップグレードを実施する必要があります。
+
+https://console.redhat.com/openshift/[OCMにログイン]して、
+コントロールプレーンを更新するROSA HCPクラスターを選択し、
+Settingsタブをクリックして、「Update」ボタンをクリックします。
+
+image::rosa/upgrade/settings.png[]
+
+[Note]
+====
+ここで「Update strategy」の「Recurring updates」を選択すると、
+指定した日時の2日前以上にリリースされたz-streamの更新(4.14.5など)が、
+ROSA HCPクラスターのコントロールプレーンに、指定したタイミングで、毎週自動適用されます。
+
+新しいマイナーバージョン(4.15や4.16など)がリリースされた場合は、利用者にメールなどで通知され、
+次のマイナーバージョンに更新されることを手動で許可する必要があります。
+
+OCMでコントロールプレーンの自動更新を有効にしている場合でも、
+ワーカーノードは手動で更新する必要があります。
+
+image::rosa/upgrade/recurring-updates.png[]
+====
+
+更新するバージョンを選択して、「Next」をクリックします。
+
+image::rosa/upgrade/version-select.png[]
+
+コントロールプレーンの更新をスケジュールします。 
+デフォルトでは「Update now」が選択されており、ROSA HCPクラスターでは、
+現在の時刻から約5分後に更新されるようスケジューリングされます。
+指定した時間にアップグレードするには、「Schedule a different time」を選択し、アップグレードの日時を設定します。
+どちらかを選択して、「Next」をクリックします。
+
+image::rosa/upgrade/schedule.png[]
+
+
+更新するバージョンとスケジュールを確認したら、
+「Confirm Update」をクリックして、更新をスケジュールします。
+
+image::rosa/upgrade/confirm.png[]
+
+[Note]
+====
+コントロールプレーンのアップグレードをキャンセルしたい場合、
+「Cancel this update」からキャンセルできます。
+
+image::rosa/upgrade/cancel1.png[]
+image::rosa/upgrade/cancel2.png[]
+====
+
+これによって、予定された時刻になると、ROSA HCPクラスターのコントロールプレーン更新が開始されます。
+コントロールプレーン更新の所要時間は、およそ15分ほどです。
+
+
+=== OCMを利用したワーカーノードの更新
+
+ROSA HCPクラスターでは、コントロールプレーンより古いバージョンのワーカーノードのMachinepoolがあると、
+Machinepool単位でワーカーノードを更新できます。
+
+OCMでは、更新可能なMachinepoolがある場合、
+指定したMachinepol、または、全てのMachinepoolを更新できます。
+OCMでMachinepoolを更新する場合、約5分後に更新がスケジュールされます。
+更新時刻を指定したい場合、ROSA CLIを利用する必要があります。
+
+image::rosa/upgrade/mp-upgrade1.png[]
+image::rosa/upgrade/mp-upgrade2.png[]
+image::rosa/upgrade/mp-upgrade3.png[]
+
+
+ワーカーノードの更新は、インプレースアップグレードではなく、
+新規ワーカーノードの追加と既存ワーカーノードの削除を実行します。
+Machinepoolに複数台のワーカーノードが紐づいている場合、台数分のワーカーノードを一括作成および削除するのではなく、
+ワーカーノードの新規追加と削除が1台ずつ自動実行されていきます。
+
+更新の際に、削除対象のワーカーノード上でPodが実行している場合、Podの停止(SIGTERM)と再作成が実行されますので、
+冗長性を考慮してPodのレプリカ数を複数個設定しておくことを推奨します。Podの停止不可の場合は、
+Podの強制停止(SIGKILL)が実行されます。これについては、
+https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination[公式ドキュメント]をご参照ください。
+
+NOTE: このROSA Labでは詳細を扱いませんが、
+https://kubernetes.io/docs/concepts/workloads/pods/#pods-and-controllers[Podのレプリカ数]は、
+Kubernetesのワークロード(デプロイ設定に利用するDeploymentなど)の中で定義できます。
+
+なお、1台のワーカーノードの更新(新規ノード作成と既存ノードの削除)にかかる所要時間は、
+およそ5~10分ほどです。
+
+NOTE: ROSA HCP 4.15+ではMachinePool内の特定のノードについて、
+https://docs.openshift.com/container-platform/4.15/nodes/nodes/nodes-nodes-working.html#nodes-nodes-working-evacuating_nodes-nodes-working[Podのスケジューリング可否の設定(cordon/uncordon)とPodの退避(drain)]
+を実行できるようになりました。これによって、ワーカーノードの更新や削除に伴って必要となるアプリケーションの事前退避が可能になります。
+
+=== ROSA CLIを利用したコントロールプレーンの更新
+
+OCMのコンソールの他に、ROSA CLIを使用してROSA HCPクラスターの
+コントロールプレーンの更新をスケジュールできます。
+次のコマンドを実行して、利用可能な更新情報を確認します。
+```
+$ rosa list upgrade cluster -c hcp-01
+VERSION  NOTES
+4.14.5   recommended
+```
+
+ここで確認した更新情報を適用するためのスケジュールを設定します。
+下記は、2023年12月13日の23時(UTC)に、更新をスケジューリングしている例です。
+`rosa upgrade cluster` コマンドでは、ROSAクラスターやそのOperatorによって利用されるIAMロールも、
+適宜更新されます。
+
+```
+$ rosa upgrade cluster -c hcp-01 --control-plane \
+  --schedule-date 2023-12-13 --schedule-time 23:00 \
+  --version 4.14.5 --mode auto --yes
+
+I: Ensuring account and operator role policies for cluster '280scqkn8ocjoochasq423tg4donvpaq' are compatible with upgrade.
+I: Account roles with the prefix 'ManagedOpenShift' have attached managed policies.
+I: Cluster 'hcp-01' operator roles have attached managed policies. An upgrade isn't needed
+I: Account and operator roles for cluster 'hcp-01' are compatible with upgrade
+I: Upgrade successfully scheduled for cluster 'hcp-01'
+```
+
+指定した更新のスケジュールを確認できます。
+
+```
+$ rosa list upgrade cluster -c hcp-01
+VERSION  NOTES
+4.14.5   recommended - scheduled for 2023-12-13 23:00 UTC
+```
+
+`rosa delete upgrade` コマンドで、更新のキャンセルをすることができます。
+キャンセルすると、更新のスケジュールが削除されていることを確認できます。
+
+```
+$ rosa delete upgrade cluster -c hcp-01
+? Are you sure you want to cancel scheduled upgrade on cluster 'hcp-01'? Yes
+I: Successfully canceled scheduled upgrade on cluster 'hcp-01'
+
+$ rosa list upgrade cluster -c hcp-01
+VERSION  NOTES
+4.14.5   recommended
+```
+
+
+=== ROSA CLIを利用したワーカーノードの更新
+
+Machinepoolを新規に作成して、更新コマンド確認用のワーカーノードを1台追加します。
+この時、選択する「OpenShift version」は、最新より古いバージョンを選択してください。
+また、「Instance type」は、デフォルトの `m5.xlarge` と区別しやすいように `c5.xlarge` を指定します。
+
+```
+$ rosa create machinepool -c hcp-01
+
+I: Enabling interactive mode
+? Machine pool name: mp20
+? OpenShift version:  [Use arrows to move, type to filter, ? for more help]
+  4.14.2
+  4.14.1
+> 4.14.0
+? OpenShift version: 4.14.0
+? Select subnet for a hosted machine pool: No
+? AWS availability zone: us-east-2a
+? Enable autoscaling: No
+? Replicas: 1
+? Labels (optional): 
+? Taints (optional): 
+I: Fetching instance types
+? Instance type: c5.xlarge
+? Autorepair: Yes
+I: Machine pool 'mp20' created successfully on hosted cluster 'hcp-01'
+I: To view all machine pools, run 'rosa list machinepools -c hcp-01'
+```
+
+`rosa list machinepool` コマンドや、
+管理者アカウントでログインしたROSAクラスターのコンソールの「コンピュート」→「Node」メニューから、
+追加したMachinepoolに紐づいたワーカーノードが1台作成されていることを確認できるまで待ちます。
+
+ワーカーノードの作成が完了したら、 `rosa list upgrade` コマンドで、 `machinepool` オプションを
+指定して、作成したMachinepoolの更新情報を確認します。次の例では、「4.14.1」と「4.14.2」のバージョンに
+更新できることが表示されています。
+
+```
+$ rosa list upgrade -c hcp-01 --machinepool mp20
+VERSION  NOTES
+4.14.2   recommended
+4.14.1   
+```
+
+Machinepoolの更新を `rosa upgrade machinepool` コマンドでスケジュールします。
+`interactive` オプションで、対話形式でパラメータを与えていくように指定します。
+なお、時刻はUTC形式で指定します。日本時間はこれより9時間進んでいることを考慮してください。
+
+```
+$ rosa upgrade machinepool mp20 -c hcp-01 --interactive
+
+I: Interactive mode enabled.
+Any optional fields can be left empty and a default will be selected.
+? Enable automatic upgrades: No
+? Please input desired date in format yyyy-mm-dd: 2023-12-13
+? Please input desired UTC time in format HH:mm: 23:00
+? Machine pool version: 4.14.1
+? Are you sure you want to upgrade machine pool 'mp20' to version '4.14.1'? Yes
+I: Upgrade successfully scheduled for the machine pool 'mp20' on cluster 'hcp-01'
+```
+
+更新実行を待つ場合は、ROSAクラスターに管理者アカウントでログインして、
+「コンピュート」→「Node」メニューから、
+Machinepoolに紐づいたワーカーノードが新規作成されて、削除されることを確認してみてください。
+
+Machinepool更新のスケジュールを削除する場合は、 `rosa delete upgrade` コマンドを実行します。
+
+```
+$ rosa delete upgrade -c hcp-01 --machinepool mp20 --yes
+I: Successfully canceled scheduled upgrade for machine pool 'mp20' for cluster 'hcp-01'
+```
+
+最後に、Machinepool更新について一通り確認した後は、不要になったMachinepoolを、
+`rosa delete machinepool` コマンドで削除してください。
+
+```
+$ rosa delete machinepool mp20 -c hcp-01 --yes
+I: Successfully deleted machine pool 'mp20' from hosted cluster 'hcp-01'
+```

@@ -1,0 +1,156 @@
+= コンテナイメージをECRにコピー
+:imagesdir::../assets/images
+:sectnums:
+:sectnumlevels: 4
+
+
+== ゴール
+
+== Skopeo
+
+https://www.redhat.com/ja/topics/containers/what-is-skopeo
+
+== 準備 skopeo のインストール
+
+
+== skopeo cli を使ったコンテナイメージのコピー
+
+skopeo を使って、OpenShiftの内部のイメージレジストリから、AWS ECRにコンテナイメージをコピーします。
+
+=== OpenShift内部のイメージレジストリの公開
+
+OpenShiftの内部のイメージレジストリは、デフォルトでは外部からアクセスできません。
+イメージレジストリに外部からアクセスできるようにするために、以下のコマンドを実行します。
+
+[.console-input]
+[source,bash]
+----
+oc patch configs.imageregistry.operator.openshift.io/cluster --patch '{"spec":{"defaultRoute":true}}' --type=merge
+----
+
+公開されたリポジトリのイメージ一覧を取得します。
+
+[.console-input]
+[source,bash]
+----
+export TOKEN=$(oc whoami -t)
+export ROUTE=$(oc get route -n openshift-image-registry -o jsonpath='{.items[0].spec.host}')
+curl -k -H "Authorization: Bearer $TOKEN" "https://$ROUTE/v2/_catalog" | jq 
+----
+
+
+=== ECR リポジトリのToken取得
+
+=== OpenShiftのToken取得
+
+
+=== Skopeo を使ってコンテナイメージのコピー
+
+. ECRにログイン
++
+[.console-input]
+[source,bash]
+----
+export AWS_ACCOUNTID=%AWSACCOUNTID%
+skopeo login --tls-verify=false -u AWS -p `aws ecr get-login-password --region us-east-2` $AWS_ACCOUNTID.dkr.ecr.us-east-2.amazonaws.com
+----
+
+. OpenShiftのイメージレジストリにログイン
++
+[.console-input]
+[source,bash]
+----
+export ROSA_USER=[OpenShiftのユーザ名]
+export ROUTE=$(oc get route -n openshift-image-registry -o jsonpath='{.items[0].spec.host}')
+export OPENSHIFT_API_URL=
+
+oc login [OpenShift API URL] -u $ROSA_USER -p [パスワード]
+export TOKEN=$(oc whoami -t)
+skopeo login --tls-verify=false -u $ROSA_USER -p $TOKEN $ROUTE
+----
+
+skopeo copy docker://$ROUTE/user02-app/containerapps-albumui docker://$AWS_ACCOUNTID.dkr.ecr.us-east-2.amazonaws.com/album/albumui:latest
+
+
+
+
+コピー元、コピー先のリポジトリにログインしていない場合、credential を指定してコピーすることができます。
+
+[.console-input]
+[source,bash]
+----
+oc login [OpenShift API URL] -u $OCP_USER -p [パスワード]
+export TOKEN=$(oc whoami -t)
+export ROUTE=$(oc get route -n openshift-image-registry -o jsonpath='{.items[0].spec.host}')
+
+skopeo copy --src-creds $OCP_USER:$TOKEN docker://$ROUTE/%USERID%-app/albumui --dest-creds AWS:$ECR_TOKEN docker://654654224671.dkr.ecr.us-east-2.amazonaws.com/album/albumui:latest
+----
+
+
+== (オプション）ECRのイメージを利用したデプロイ
+
+Private な ECR に格納されたコンテナイメージを利用してオンプレミスのOpenShiftにアプリケーションをデプロイします。
+
+=== OpenShiftにログイン
+
+CLIを利用してOpenShiftにログインします。
+
+
+=== ECR用のImage Pull Secretの作成
+
+. OpenShiftのプロジェクトを作成
+. ECRのイメージをPullするためのSecretを作成
++
+[.console-input]
+[source,bash]
+----
+oc create secret docker-registry ecr-secret --
+docker-server=$AWS_ACCOUNTID.dkr.ecr.us-east-2.amazonaws.com --docker-user
+name=AWS --docker-password=$(aws ecr get-login-password)
+----
+
+
+OpenShiftのGUI または Manifest を利用してアプリケーションをデプロイします。
+
+=== アプリケーションをデプロイ (GUIの利用)
+
+. 左上のパースペクティブで「開発者」モードを選択
+. 左のメニューで「+追加」をクリック
+. 右のメニューで「コンテナイメージ」をクリック
+. 外部のイメージレジストリからのイメージ名でECRのURIを入力
++
+`[AWS_ACCOUNT_ID].dkr.ecr.us-east-2.amazonaws.com/album/albumui:latest`
++
+. 画面下部の「作成」ボタンをクリック
+
+=== アプリケーションのデプロイ(Manifestの利用)
+
+. Deploymentのマニフェストファイルを作成して適用
++
+[.console-input]
+[source,bash]
+----
+export AWS_ACCOUNTID=654654224671
+oc create deployment albumui --image=$AWS_ACCOUNTID.dkr.ecr.us-east-2.amazonaws.com/album/albumui:latest --dry-run=client -o yaml > deployment-albumui.yaml
+
+oc apply -f deployment-albumui.yaml
+----
++
+. Serviceのマニフェストを作成して適用
++
+[.console-input]
+[source,bash]
+----
+oc create service clusterip albumui --tcp=8080 --dry-run=client -o yaml > service-albumui.yaml
+
+oc apply -f service-albumui.yaml
+----
++
+. Routeのマニフェストを作成して適用
++
+[.console-input]
+[source,bash]
+----
+oc create route edge albumui --service=albumui --port 8080 --dry-run=client -o yaml > route-albumui.yaml
+oc apply -f route-albumui.yaml
+----

@@ -1,0 +1,242 @@
+= ROSAにアプリケーションをデプロイ
+:imagesdir::../assets/images
+:sectnums:
+:sectnumlevels: 4
+
+
+
+== ゴール
+
+フロントアプリ(album-ui)とバックエンドアプリ(album-api)の2つのアプリケーションをデプロイし、フロントアプリからバックエンドアプリに連携できるように設定していきます。
+また、バックエンドアプリ(album-api)は、PostgreSQLをデータベースとして利用します。
+
+このハンズオンでは、コンテナイメージおよびGitリポジトリに保存されたソースコードを元にOpenShiftにアプリケーションをデプロイしていきます。
+OpenShiftのs2iビルドの機能を使ってYAMLファイルを作成することなく、OpenShiftにアプリケーションをデプロイできることを体験します。
+
+=== アプリケーションの構成
+
+== Postgresql のデプロイ
+
+永続ボリュームを利用するPostgresqlをデプロイします。また、データベースに接続するためのユーザ、パスワードを含むSecretも作成します。
+
+
+[.console-input]
+[source,bash]
+----
+oc new-project %USERID%-app
+oc apply -f https://raw.githubusercontent.com/akubicharm/containerapps-albumapi-java/main/openshift/postgresql/postgresql.yaml
+----
+
+作成されたリソースを確認します。
+
+[.console-input]
+[source,bash]
+----
+oc get secret
+oc get pvc
+oc get deployment
+oc get pods
+----
+
+== Album API アプリケーションのデプロイ
+
+Album API アプリケーションのGitリポジトリを指定してアプリケーションをデプロイします。
+
+Album APIアプリケーションは、実行時にバックエンドのPostgresqlに接続するため情報をSecret (postgresql) から取得して利用します。
+
+. 左上のパースペクティブで「開発者」モードを選択
+. 左のメニューで「+追加」をクリック
+. 右のメニューで「Gitリポジトリ - Gitからのインポート」をクリック
+. GitリポジトリURLの情報を入力
++
+{git-albumapi-java}
++
+. Builder Imageとして *OpenJDK17* が選択されていることを確認
+. 名前を `album-api` に変更
+. リソースタイプが「Deployment」になっていることを確認
+. 「> 詳細なデプロイメントオプションの表示」をクリックして環境変数を入力。ここでSecretからDB接続情報を取得して環境変数として利用するように設定
++
+* JDBC URLの設定
+** 「+ConfigMapまたはシークレットから追加」をクリック
+** 名前：`POSTGRESQL_URL`
+** リソースの選択：シークレット `postgresql`
+** キーの選択: `database-url`
+* DB接続ユーザの設定
+** 「+ConfigMapまたはシークレットから追加」をクリック
+** 名前：`POSTGRESQL_USER`
+** リソースの選択：シークレット `postgresql`
+** キーの選択: `database-user`
+* DB接続パスワードの設定
+** 「+ConfigMapまたはシークレットから追加」をクリック
+** 名前：`POSTGRESQL_PASSWORD`
+** リソースの選択：シークレット `postgresql`
+** キーの選択: `database-password`
++
+. 詳細オプションのターゲットポートが `8080` になっていることを確認
+. route の作成にチェックが入っていることを確認
+
+[NOTE]
+====
+フロントエンドアプリケーションからしか呼ばれない想定なので外部からアクセスするためのrouteの作成は本来不要ですが、ここでは動作確認のため外部からアクセスするためのrouteを作成します。
+====
+
+
+== REST API呼び出しの確認
+
+デプロイが完了したら、ブラウザでalbum-apiのURLを開きます。
+
+. トポロジービューでアプリケーションがデプロイされていることを確認
+. URLを開くボタンをクリック
+. 「Please visit /albums to see a list of albums.」と表示されているのでコンテキストパスに `/albums` を追加してURLを開く
+. 以下のようなJSON形式のデータが表示されることを確認
+
+[source,json]
+----
+[
+    {
+        "id": 1,
+        "title": "OpenShift Virtualizationサーバ仮想化実践ガイド",
+        "artist": "石川 純平/大村 真樹",
+        "price": 3080,
+        "book_url": "https://book.impress.co.jp/books/1124101080",
+        "image_url": "https://img.ips.co.jp/ij/24/1124101080/1124101080-520x.jpg"
+    },
+    {
+        "id": 2,
+        "title": "インフラの構成管理と自動化のための実践Ansible",
+        "artist": "八木澤健人/呉理沙/小野天平/長嶺精彦/山中裕史",
+        "price": 3960,
+        "book_url": "https://www.shuwasystem.co.jp/book/9784798068725.html",
+        "image_url": "https://www.shuwasystem.co.jp/images/book/647676.jpg"
+    },
+    {
+        "id": 3,
+        "title": "OpenShift徹底入門",
+        "artist": "レッドハット株式会社",
+        "price": 4180,
+        "book_url": "https://www.shoeisha.co.jp/book/detail/9784798172552",
+        "image_url": "https://www.seshop.com/static/images/product/24696/L.png"
+    },
+    {
+        "id": 4,
+        "title": "Podmanイン・アクション",
+        "artist": "Daniel Walsh",
+        "price": 4180,
+        "book_url": "https://www.shuwasystem.co.jp/book/9784798070209.html",
+        "image_url": "https://www.shuwasystem.co.jp//images/book/633833.jpg"
+    },
+    {
+        "id": 5,
+        "title": "バージョン8＆9両対応！ Red Hat Enterprise Linux完全ガイド",
+        "artist": " 小島啓史/平初/田中司恩/橋本賢弥/八木澤健人/米山和重",
+        "price": 4950,
+        "book_url": "https://info.nikkeibp.co.jp/media/LIN/atcl/books/082200035/",
+        "image_url": "https://cdn-info.nikkeibp.co.jp/media/LIN/atcl/books/082200035/top.jpg?__scale=w:250,h:322&_sh=0990b30450"
+    },
+    {
+        "id": 6,
+        "title": "Quarkus in Action (Free eBook Edition)",
+        "artist": "Martin Stefanko/Jan Martiska",
+        "price": 0,
+        "book_url": "https://developers.redhat.com/e-books/quarkus-action?extIdCarryOver=true&sc_cid=701f2000001Css5AAC",
+        "image_url": "https://developers.redhat.com/sites/default/files/styles/cheat_sheet_feature/public/E-book%20cover%20graphic_Quarkus%20in%20Action.jpg.webp?itok=xZlT_iv4"
+    }
+]
+----
+
+== Album UI アプリケーションのデプロイ
+
+フロントエンドアプリ(album-ui)をデプロイします。
+
+. 左上のパースペクティブで「開発者」モードを選択
+. 左のメニューで「+追加」をクリック
+. 右のメニューで「コンテナイメージ」をクリック
+. イメージセクションの「外部レジストリーからのイメージ名」を選択し、イメージのURL「 {image-albumui} 」と入力
++ 
+URLのチェックが終わると「検証済み」になります
++
+. リソースタイプが「Deployment」になっていることを確認
+. 詳細オプションセクションのターゲットポートが `8080` になっていることを確認
+. route の作成にチェックが入っていることを確認
+. 画面下部の「作成」ボタンをクリック
+. トポロジービューでアプリケーションがデプロイされていることを確認（濃い青線ならばOK）
+. URLを開くボタンをクリック
+. 「Unable to communicate with server」と画面に表示されていることを確認
++
+[NOTE]
+====
+この段階では、Album UIアプリから呼び出すREST APIのURLが設定されていないので、サーバに接続できないというエラーになります。
+====
+
+== Album UI と Album API の連携
+
+Album UI アプリケーションはバックエンドサービスのURLを `API_BASE_URL` という環境変数で指定するようになっていますので、環境変数を設定して連携できるようにしていきます。
+
+環境変数の指定方法は複数あります。
+
+. Podに環境変数を設定する（Deploymentでenvを指定する）
+. Configmapを作成してPodからマウントする
+
+このワークショップではどちら好きな方法を選んで設定してください。
+
+=== 環境変数で設定
+
+Deploymentを編集して環境変数として `API_BASE_URL` を指定していきます。
+
+. トポロジービューで 「(D)album-ui」 をクリック
+. 右Paneの「アクション」プルダウンメニューで「Deploymentの編集」をクリック
+. 「環境変数」にバックエンドのURLを指定
++
+|===
+|名前|API_BASE_URL
+|値|\http://albumapi:8080
+|===
++
+. 「保存」ボタンをクリック
+
+Deploymentが更新されるとPodが再起動されます。再起動後にPodに環境変数が設定されていることを確認してください。
+
+
+=== Configmapで設定
+
+. 左のメニューで「Configmap」をクリックし、右上の「Configmapを作成」ボタンをクリック
+. パラメータを入力して画面下部の「作成」ボタンをクリック
++
+|===
+|名前|albumui-config
+|キー|API_BASE_URL
+|値|\http://albumapi:8080
+|===
++
+. トポロジービューで 「(D)album-ui」 をクリック
+. 右Paneの「アクション」プルダウンメニューで「Deploymentの編集」をクリック
+. 「+ Configmapまたはシークレットから追加」をクリック
++
+|===
+|名前|`API_BASE_URL`  （これが環境変数名になる）
+|リソースの選択|ConfigMap `albumui-config`
+|キーの選択|`API_BASE_URL`
+|===
++
+. 「保存」ボタンをクリック
+
+Deploymentが更新されるとPodが再起動されます。再起動後にPodに環境変数が設定されていることを確認してください。
+
+
+[NOTE]
+====
+YAMLファイルを使ってConfigmapを作成する場合は、以下を参考にしてください。
+
+[.console-input]
+[source,yaml]
+----
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: albumui-config
+data:
+  API_BASE_URL: http://albumapi:8080
+immutable: false
+----
+====
+

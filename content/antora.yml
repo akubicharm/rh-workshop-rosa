@@ -1,0 +1,5 @@
+name: akubi-project
+version: ~
+title: Try ROSA
+nav:
+- modules/ROOT/nav.adoc

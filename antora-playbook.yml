@@ -1,0 +1,35 @@
+site:
+  title: ROSA Workshop
+  url: https://akubicharm.github.io/rh-workshop-rosa
+  start_page: akubi-project::index.adoc
+
+content:
+  sources:
+  - url: .
+    branches: HEAD
+    start_path:
+      - ./content
+
+asciidoc:
+  attributes:
+    app-project-name: albumapp
+    image-albumui: quay.io/keomizo_redhat/albumui-nodejs
+    git-albumapi-java: \https://github.com/akubicharm/containerapps-albumapi-java
+ui:
+  bundle:
+#   url: https://github.com/redhat-developer-demos/rhd-tutorial-ui/releases/download/v0.1.10/ui-bundle.zip
+    url: ./bundle-ui/ui-bundle-fix-rexp.zip
+#    url: https://github.com/danieloh30/course-ui/raw/main/ui-bundle-fix-rexp.zip
+    snapshot: true
+  supplemental_files:
+    - path: ./content/supplemental-ui
+    - path: partials/header-content.hbs
+      contents: ./content/supplemental-ui/partials/header-content.hbs
+    - path: partials/footer-content.hbs
+      contents: ./content/supplemental-ui/partials/footer-content.hbs
+#    - path: img/octacatkay.png
+#     contents: ./content/supplemental-ui/img/octacatkay.png                
+    - path: .nojekyll
+    - path: ui.yml
+      contents: "static_files: [.nojekyll]"
+

@@ -1,0 +1,241 @@
+= OpenShift Sandbox にアプリケーションをデプロイ
+:imagesdir:: ../assets/images
+
+== ゴール
+
+image::app_structure.png[アプリケーションの構成]
+
+フロントアプリ(album-ui)とバックエンドアプリ(album-api)の2つのアプリケーションをデプロイし、フロントアプリからバックエンドアプリに連携できるように設定していきます。
+
+このハンズオンでは、コンテナイメージおよびGitリポジトリに保存されたソースコードを元にOpenShiftにアプリケーションをデプロイしていきます。
+OpenShiftのs2iビルドとデプロイの機能を利用するので、YAMLファイルを作成することなく、OpenShiftにアプリケーションをデプロイできることを体験します。
+
+
+== 準備
+
+Red Hat Developerのサイトで、Red Hat Acountが登録してください。
+
+Red Hat Developerのアカウント名を画面上部のテキストフィールドに入力してください。ワークショップのコンテンツにRed Hat Developerのアカウント名が反映されます。
+
+image::enter_your_workshop_env.png[Red Hat DeveloperのIDを入力]
+
+
+
+
+== Step1: サンドボックスの開始
+
+. https://developers.redhat.com/developer-sandbox にアクセスして「Start your sandbox for free」をクリック
+. 「Log in to your Red Hat account」の画面で、Red Hatアカウントでログイン
+. Red Hat Hybrid Cloud Console画面で、Red Had OpenShiftの「Launch」ボタンをクリック
+. Log in with … の画面で「DevSandbox」をクリック。OpenShiftのポータル画面が表示される
+. 自分の「%USERID%-dev」というネームスペースにアクセス
++
+[NOTE]
+====
+管理者ビューでは「%USERID%-dev」と「openshift-virtualization-os-images」いうネームスペースが表示されます。開発者ビューでは「%USERID%-dev」だけが表示されます。
+sandbox環境では、新しいネームスペースを作成することはできません。
+====
+
+== Step2. Album API アプリケーションのデプロイ
+
+image::app_structure_albumapi.png[アプリケーションの構成]
+
+このステップではコンテナイメージを指定して、バックエンドのアプリケーションをデプロイします。
+
+1. 左Paneのプルダウンメニューで「開発者」を選択
+2. 左Paneの「＋追加」をクリック
+3. 右Paneをスクロールして「コンテナイメージ」をクリック
++
+image::add_albumapi_app_123.png[コンテナイメージ指定でアプリケーションのデプロイを開始]
+
+4. イメージセクションの「外部レジストリーからのイメージ名」を選択し、イメージのURL「quay.io/keomizo_redhat/albumapi-javascript」を入力
++
+※URLのチェックが終わると「検証済み」となる
++
+image::add_albumapi_app_4.png[イメージセクション]
+
+5. 一般セクションはデフォルトのまま
++
+image::add_albumapi_app_5.png[一般セクション]
+
+6. デプロイセクションのリソースタイプのプルダウンメニューで「Deployment」を選択
++
+image::add_albumapi_app_6.png[デプロイセクション]
+
+7. 詳細オプションセクションのターゲットポートが「8080」となっていることを確認
+
+8. 「routeの作成」のチェックボックスをチェック
++
+image::add_albumapi_app_78.png[詳細セクション]
++
+[NOTE]
+====
+フロントエンドアプリケーションからしか呼ばれない想定なので外部からアクセスするためのrouteの作成は本来不要ですが、ここでは動作確認のため外部からアクセスするためのrouteを作成します。
+====
+
+9. 画面下部の「作成」ボタンをクリック
++
+image::add_albumapi_app_9.png[作成]
+
+10. トポロジービューでアプケーションがデプロイされていることを確認（青線ならばOK）
+
+image::add_albumapi_app_success.png[コンテナイメージ指定でアプリケーションのデプロイ成功]
+
+== Step3. REST API呼び出しの確認
+
+1. トポロジー表示画面の右PaneでURLを開くボタンをクリック
+
+2. ブラウザにJSONの文字列が表示されることを確認
++
+[source,json]
+----
+{"message":"Call the /albums route to retrieve a list of albums"}
+----
+
+3. ブラウザのURLの後ろに /albums を追記して、アルバム一覧のJSONメッセージが返ってくることを確認
++
+[source,json]
+----
+[
+    {
+        "id": 1,
+        "title": "You, Me and an App ID",
+        "artist": "Daprize",
+        "price": 56.99,
+        "image_url": "https://aka.ms/albums-daprlogo"
+    },
+    {
+        "id": 2,
+        "title": "Seven Revision Army",
+        "artist": "The Blue-Green Stripes",
+        "price": 17.99,
+        "image_url": "https://aka.ms/albums-containerappslogo"
+    },
+    {
+        "id": 3,
+        "title": "Scale It Up",
+        "artist": "KEDA Club",
+        "price": 39.99,
+        "image_url": "https://aka.ms/albums-kedalogo"
+    },
+    {
+        "id": 4,
+        "title": "Lost in Translation",
+        "artist": "MegaDNS",
+        "price": 39.99,
+        "image_url": "https://aka.ms/albums-envoylogo"
+    },
+    {
+        "id": 5,
+        "title": "Lock Down your Love",
+        "artist": "V is for VNET",
+        "price": 39.99,
+        "image_url": "https://aka.ms/albums-vnetlogo"
+    },
+    {
+        "id": 6,
+        "title": "Sweet Container O' Mine",
+        "artist": "Guns N Probeses",
+        "price": 39.99,
+        "image_url": "https://aka.ms/albums-containerappslogo"
+    }
+]
+----
+
+== Step4. Album UIアプリケーションのデプロイ
+
+このステップでは、Album UIアプリケーションのGitリポジトリを指定してアプリケーションをデプロイします。
+
+image::app_structure_albumui.png[アプリケーションの構成]
+
+1. プルダウンメニューで「開発者」モードを選択
+2. 左Paneの「＋追加」をクリック
+3. 右Paneをスクロールして「Gitリポジトリ」をクリック
++
+image::add_albumui_app_1.png[Gitリポジトリ指定でアプリケーションのデプロイを開始]
+
+4. Gitリポジトリの情報を入力
+
+5. Builder Imageとしてnode.jsが選択されていることを確認
++
+image::add_albumui_app_4.png[ビルダーの確認]
+
+6. アプリケーションプルダウンで「アプリケーションの作成」を選択
+
+7. アプリケーション名に「albumui」を入力
+
+8. 名前は変更せずそのまま
++
+image::add_albumui_app_6.png[アプリケーション名の設定]
+
+
+9. リソースタイプのプルダウンで「Deployment」を選択
++
+image::add_albumui_app_9.png[デプロイ方式の選択]
+
+10. 詳細オプションセクションのターゲットポートに「8080」となっていることを確認
+11. 「routeの作成」のチェックボックスをチェック
++
+image::add_albumui_app_10.png[Routeの作成]
+
+12. 画面下部の「作成」ボタンをクリック
++
+image::add_albumui_app_12.png[アプリの作成]
+
+13. トポロジービューでアプケーションがデプロイされていることを確認（青線ならばOK）
+14. URLを開くボタンをクリック
++
+image::add_albumui_app_14.png[デプロイの確認]
+
+15. 「Unable to communicate with server」と画面に表示されることを確認
++
+[NOTE]
+====
+この段階では、Album UIアプリから呼び出すREST APIのURLが設定されていないので、サーバに接続できないというエラーになる。
+====
++
+image::add_albumui_app_15.png[アプリのビュー]
+
+
+== Step5. Album UIとAlbum APIの連携
+
+このステップではAlbum UIのバックエンドのURLにAlbum APIのURLを設定して、連携できるようにします。
+
+image::app_structure_uiapi.png[アプリケーション構成]
+
+1. トポロジービューでalbum-scriptをクリック
+2. 右Paneに表示されたServiceを確認
++
+|===
+|名前|albumapi-javascript
+|ポート|8080
+|===
++
+image::add_env_1.png[サービスポートの確認]
+
+3. トポロジービューでcontainer-albumuiのDeploymentをクリック
+4. 右Pane上部のアクションプルダウンメニューで「Deploymentの編集」をクリック
++
+image::add_env_3.png[Deploymentの編集]
+5. デプロイメントの編集画面で「フォームビュー」をクリック
+6. 環境変数にバックエンドのURLを指定
++
+|===
+|名前|API_BASE_URL
+|値|http://albumapi-javascript:8080
+|===
++
+image::add_env_5.png[環境変数の設定]
+
+
+7. 「保存」ボタンをクリック
+
+== Step6. Album UI と Album APIの連携を確認
+
+1. URLを開くボタンをクリック
++
+image::add_env_success_1.png[アプリケーションのURLを開く]
+
+2. アルバムの一覧が画面に表示されることを確認
++
+image::add_env_success_2.png[成功した画面]

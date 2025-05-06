@@ -1,0 +1,503 @@
+= [デモ] ROSA HCPクラスターの作成
+:imagesdir::../assets/images
+// :navtitle: rosa-hcp-create
+include::_attributes.adoc[]
+
+
+== デモの概要
+このモジュールでは、インストラクターがROSA HCPクラスター作成方法の概要をご紹介します。
+
+---
+
+=== 前準備
+
+ROSAは、Red Hatによるお客様の既存AWSアカウントへのデプロイを可能にするモデルを提供します。Red Hatはセキュリティを考慮して、
+https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_credentials_temp.html[AWS Secrity Token Service (STS)] を使用することを、ROSA HCPクラスター作成の前提条件としています。STSを使用したROSA HCPクラスター作成の前提条件は、次のドキュメントをご参照ください。
+
+* https://access.redhat.com/documentation/ja-jp/red_hat_openshift_service_on_aws/4/html/prepare_your_environment/rosa-sts-aws-prereqs[STS を使用した ROSA の AWS 前提条件]
+* https://access.redhat.com/documentation/ja-jp/red_hat_openshift_service_on_aws/4/html/introduction_to_rosa/rosa-sts-about-iam-resources[STS を使用する ROSA クラスターの IAM リソースについて]
+* https://access.redhat.com/documentation/ja-jp/red_hat_openshift_service_on_aws/4/html/prepare_your_environment/rosa-sts-required-aws-service-quotas[必要な AWS サービスクォータ]
+
+ROSA HCPクラスターを作成するには、AWSアカウントと
+https://cloud.redhat.com/[Red Hatアカウント]を利用します。アカウントがない場合は、アカウントを作成する必要があります。
+
+https://console.aws.amazon.com/rosa/home#/get-started[AWSコンソール]でROSAのHCPサービスを有効にします。ROSAにはClassicとHCPの2つのスタイルがありますが、ROSA HCPサービスを有効化するようにしてください。次のような画面になれば、ROSA HCPサービスが有効になっています。
+
+image::rosa/hcp-create/hcp-enable.png[]　
+
+AWS CLIを
+https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html[インストール]して、
+https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/cli-chap-configure.html[設定]します。このとき、`~/.aws/credentials` で、次の情報を設定する必要があります。
+
+- aws_access_key_id
+- aws_secret_key
+
+また、デフォルトで利用するリージョンを指定する場合、`~/.aws/config` で設定できます。
+
+```
+$ cat ~/.aws/config 
+[default]
+region = us-east-2
+```
+
+そして、次のコマンドを実行して、AWS APIをクエリーし、AWS CLIがインストールされて正しく設定されていることを確認します。次のような出力が表示されれば、AWS CLIの設定が完了しています。
+
+```
+$ aws sts get-caller-identity
+{
+    "UserId": "AIDXXXXXXXXXXXXX",
+    "Account": "XXXXXXXXX",
+    "Arn": "arn:aws:iam::XXXXXXXXX:user/testuser01"
+}
+```
+
+AWSアカウントを利用してELBをインストールしたことがない場合、次のコマンドを実行してELB用のロールを作成します。
+```
+$ aws iam create-service-linked-role --aws-service-name "elasticloadbalancing.amazonaws.com"
+```
+[NOTE]
+====
+AWSのコンソールでELB サービスにリンクされたロールセクションに「AWSServiceRoleForElasticLoadBalancing はすでに存在します。」と表示されている場合は、上記コマンドは実施不要です。
+====
+
+
+AWSサービスクォータがROSA HCPクラスター用の要件を満たしており、ELB用のロールが作成されていると、次の画面が表示されます。ここから画面一番下にある「Red Hatに進む」ボタンをクリックして、AWSとRed Hatアカウントをリンクします。
+
+image::rosa/hcp-create/link01.png[]
+
+「Red Hatに進む」ボタンをクリックすると、次の画面が表示されます。ここで、Red Hatアカウントにログインしていない場合、ログイン画面が表示されますので、ログインしておきます。ここで「I have read and agreed to the terms and conditions」にチェックを入れて、「Connect accounts」ボタンをクリックすると、AWSとRed Hatアカウントのリンクが完了します。
+
+image::rosa/hcp-create/link02.png[]
+
+リンクが無事に完了すると、次のメッセージが画面上に表示されます。
+
+```
+Congratulations, your Red Hat and AWS accounts are linked
+Welcome to the Red Hat Hybrid Cloud Console. If you cannot access production tools for a subscription that you have purchased, please wait 5 minutes and and confirm your subscription at subscription inventory. Here you can configure or manage Red Hat OpenShift Cluster Manager.
+```
+
+続いて、
+https://console.redhat.com/openshift/downloads[ROSA CLI]をダウンロードして、PATHを設定します。
+
+image::rosa/hcp-create/rosa-cli-download.png[]
+
+
+```
+$ chmod +x rosa
+$ sudo mv rosa /usr/local/bin/
+$ rosa version
+1.2.31
+```
+
+ROSA CLIでRed Hatアカウントにログインします。アクセストークンは、下記のコマンド実行により表示されているURLから入手できます。
+```
+$ rosa login
+To login to your Red Hat account, get an offline access token at https://console.redhat.com/openshift/token/rosa
+? Copy the token and paste it here: ********************
+I: Logged in as '<Red Hatアカウントのユーザー名>' on 'https://api.openshift.com'
+```
+
+次のコマンドを実行して、AWSおよびRed Hatの認証情報が正しく設定されていることを確認します。AWSアカウントID、デフォルトのリージョン、および、ARNが設定した内容と一致していることを確認します。
+
+```
+$ rosa whoami
+AWS Account ID:               XXXXXXXXXX
+AWS Default Region:           us-east-2
+AWS ARN:                      arn:aws:iam::XXXXXXXXXX:user/testuser01
+OCM API:                      https://api.openshift.com
+OCM Account ID:               XXXXXXXXXX
+OCM Account Name:             Hiforumi Kojima
+OCM Account Username:         <Red Hatアカウントのユーザー名>
+OCM Account Email:            hkojima@redhat.com
+OCM Organization ID:          XXXXXXXXXX
+OCM Organization Name:        Hiforumi Kojima
+OCM Organization External ID: XXXXXXXXXX
+```
+
+ROSA CLIを利用して、最新のOpenShift CLI (oc) をインストールします。下記の手順は、Linux版のopenshift-clientのtarファイルを解凍する例です。
+```
+$ rosa download openshift-client
+$ tar xvf openshift-client-linux.tar.gz
+$ sudo mv oc /usr/local/bin/
+$ rosa verify openshift-client
+I: Verifying whether OpenShift command-line tool is available...
+I: Current OpenShift Client Version: 4.14.5
+```
+
+=== ROSA HCPクラスターに必要なAWS VPCやIAMロールの作成
+
+ROSA HCPクラスター作成に必要なAWS VPCを作成します。AWS VPCはAWSコンソールから作成できますが、TerraformでVPCを作成するためのテンプレートが用意されているので、それを利用することもできます。TerraformでVPCを作成するためには、次のコマンドを実行します。`terraform plan` コマンドでは、HCPクラスターが作成できるAWSリージョンのIDを指定する必要があります。
+
+```
+$ git clone https://github.com/openshift-cs/terraform-vpc-example
+$ cd terraform-vpc-example
+$ terraform init
+
+$ terraform plan -out rosa.tfplan -var region=us-east-2
+$ terraform apply rosa.tfplan
+```
+
+[Note]
+====
+ここではAWSリージョンのシングルアベイラビリティーゾーン(SingleAZ)に、ROSA HCPクラスターのワーカーノードを作成することを前提として、
+VPCを作成しています。マルチアベイラビリティーゾーン(MultiAZ)にワーカーノードを作成して、
+AZ単位で冗長性を確保したい場合は、`terraform plan` コマンド実行時に、リージョンにあるAZのIDを3つ指定します。
+```
+$ terraform plan -out rosa.tfplan -var region=us-east-2 \
+  -var single_az_only=false \
+  -var 'subnet_azs=["use2-az1", "use2-az2", "use2-az3"]'
+```
+====
+
+AWS VPCの作成が完了していることを、`terraform output` コマンドで確認します。このとき、作られるサブネットのIDがHCPクラスター作成に必要となるので、`export` コマンドで `SUBNET_IDS` 変数に代入しておきます。
+
+```
+$ export SUBNET_IDS=$(terraform output -raw cluster-subnets-string)
+$ echo $SUBNET_IDS
+subnet-0fb4f75f448b5499c,subnet-0087cb7bb3f628793
+```
+
+AWS IAMロールを、ROSA CLIを使って作成します。
+これによって、ROSA専用の既存のIAMポリシーが、作成されたIAMロールに自動的に割り当てられます。
+
+```
+$ rosa create account-roles --mode auto --hosted-cp --yes
+I: Logged in as '<Red Hatアカウントのユーザー名>' on 'https://api.openshift.com'
+I: Validating AWS credentials...
+I: AWS credentials are valid!
+I: Validating AWS quota...
+I: AWS quota ok. If cluster installation fails, validate actual AWS resource usage against https://docs.openshift.com/rosa/rosa_getting_started/rosa-required-aws-service-quotas.html
+I: Verifying whether OpenShift command-line tool is available...
+I: Current OpenShift Client Version: 4.14.5
+I: Creating account roles
+I: Creating hosted CP account roles using 'arn:aws:iam::XXXXXXXXX:user/testuser01'
+I: Created role 'ManagedOpenShift-HCP-ROSA-Installer-Role' with ARN 'arn:aws:iam::XXXXXXXXX:role/ManagedOpenShift-HCP-ROSA-Installer-Role'
+I: Created role 'ManagedOpenShift-HCP-ROSA-Support-Role' with ARN 'arn:aws:iam::XXXXXXXXX:role/ManagedOpenShift-HCP-ROSA-Support-Role'
+I: Created role 'ManagedOpenShift-HCP-ROSA-Worker-Role' with ARN 'arn:aws:iam::XXXXXXXXX:role/ManagedOpenShift-HCP-ROSA-Worker-Role'
+I: To create an OIDC Config, run the following command:
+	rosa create oidc-config
+```
+
+AWSコンソールから、ROSAクラスター作成に必要なIAMロールが作成されていることを確認できます。
+このIAMロールは、複数のクラスターにわたって使用されます。
+
+image::rosa/hcp-create/managed-openshift-hcp-roles.png[]
+
+ROSA HCPクラスターの
+https://www.redhat.com/en/topics/containers/what-is-a-kubernetes-operator[Operator]が、
+専用のIAMロールを作成して利用するために必要となる、OpenID Connectの設定を作成します。
+
+```
+$ rosa create oidc-config --mode auto --yes
+I: Setting up managed OIDC configuration
+I: To create Operator Roles for this OIDC Configuration, run the following command and remember to replace <user-defined> with a prefix of your choice:
+	rosa create operator-roles --prefix <user-defined> --oidc-config-id 280rqooan3kqqn4o1us1ip073fsrkfm8
+If you are going to create a Hosted Control Plane cluster please include '--hosted-cp'
+I: Creating OIDC provider using 'arn:aws:iam::XXXXXXXXX:user/testuser01'
+I: Created OIDC provider with ARN 'arn:aws:iam::XXXXXXXXX:oidc-provider/rh-oidc.s3.us-east-1.amazonaws.com/280rqooan3kqqn4o1us1ip073fsrkfm8'
+```
+
+[Note]
+====
+ROSA CLIを使ってHCPクラスターを作成する時に必要となるIAMロールは、次の2種類です。
+
+* アカウントロール(account roles): Red Hat SREチームがクラスターの管理に利用します。
+* オペレーターロール(operator roles): OpenShiftのOperatorがAWSリソースの管理に利用します。
+クラスターごとに個別に作成されます。
+
+これらのIAMロールに割り当てられるIAMポリシーの詳細は、
+https://docs.aws.amazon.com/rosa/latest/userguide/security-iam-awsmanpol.html#security-iam-awsmanpol-rosamanagedpolicies-account-roles[公式ドキュメント]をご参照下さい。
+====
+
+
+=== ROSA HCPクラスターの作成
+
+ROSA HCPクラスターの作成コマンドを実行します。`version` オプションを指定しない場合、自動的に最新版のOpenShiftが利用されます。`dry-run` オプションを付けると、正常に実行可能かどうかを事前確認できます。次のコマンドによって `hcp-01` という名前のROSA HCPクラスター( `m5.xlarge` のワーカーノード)が自動的に作成されます。
+
+NOTE: このとき、指定するサブネットIDによって、SingleAZ構成とMultiAZ構成のどちらになるかが自動的に決まります。今まで実行してきたコマンド例だと、パブリック/プライベートサブネットIDを1つずつ指定することになるので、ワーカーノード2台のSingleAZ構成としてROSA HCPクラスターが作成されます。
+
+`--odic-config-id` には、先程実行した `rosa create oidc-config` コマンドの出力結果に表示されたoidc-config-idを指定します。
+
+```
+export OIDC_CONFIG_ID=出力結果のoidc config id
+export CLUSTER_NAME=AWS Orgnization で一意の名前
+$ rosa create cluster --cluster-name=$CLUSTER_NAME --mode=auto --yes --hosted-cp \
+  --oidc-config-id $OIDC_CONFIG_ID \
+  --subnet-ids=$SUBNET_IDS --region=us-east-2 \
+  --compute-machine-type m5.xlarge --version 4.14.2
+```
+
+[Note]
+====
+ROSA HCPクラスターのワーカーノードの
+https://docs.openshift.com/rosa/rosa_architecture/rosa_policy_service_definition/rosa-hcp-service-definition.html#rosa-sdpolicy-instance-types_rosa-hcp-service-definition[最小台数は2台、最大台数は500台]です。これは、SingleAZ, MultiAZで共通しています。
+
+MultiAZ構成のワーカーノードを利用する場合は、SingleAZ構成の時と同様に、 `rosa create cluster` コマンド実行時に `subnet-ids` オプションで、MultiAZ構成を取るためのパブリック/プライベートサブネットを指定します。
+
+AWSリージョンで利用可能なEC2インスタンスのタイプにも依存しますが、最小でc5.xlarge(4vCPU/RAM8GiB)のインスタンスを、ワーカーノードとして利用できます。
+ワーカーノードのデフォルトのEC2インスタンスタイプは、m5.xlarge(4vCPU/RAM16GiB)です。
+ROSA HCPクラスター作成時に、オプションとしてワーカーノードのインスタンスタイプ(例: `--compute-machine-type c5.xlarge` )や台数(例: `--replicas 3` )を指定できます。
+====
+
+
+対話モードによりオプションを指定しながら作成することもできます。
+次のコマンドでは、それぞれデフォルトのパラメーターを指定しています。
+
+```
+export OIDC_CONFIG_ID=出力結果のoidc config id
+export CLUSTER_NAME=AWS Orgnization で一意の名前
+$ rosa create cluster --cluster-name=$CLUSTER_NAME --mode=auto --hosted-cp \
+  --subnet-ids=$SUBNET_IDS --region=us-east-2 --version 4.14.2
+
+I: Using 'XXXXXXXXX' as billing account
+I: To use a different billing account, add --billing-account xxxxxxxxxx to previous command
+I: Using arn:aws:iam::XXXXXXXXX:role/ManagedOpenShift-HCP-ROSA-Installer-Role for the Installer role
+I: Using arn:aws:iam::XXXXXXXXX:role/ManagedOpenShift-HCP-ROSA-Worker-Role for the Worker role
+I: Using arn:aws:iam::XXXXXXXXX:role/ManagedOpenShift-HCP-ROSA-Support-Role for the Support role
+
+? OIDC Configuration ID: $OIDC_CONFIG_ID | https://rh-oidc.s3.us-east-1.amazonaws.com/280rqooan3kqqn4o1us1ip073fsrkfm8
+? Tags (optional): 
+? AWS region: us-east-2
+? PrivateLink cluster: No
+? Machine CIDR: 10.0.0.0/16
+? Service CIDR: 172.30.0.0/16
+? Pod CIDR: 10.128.0.0/14
+? Enable Customer Managed key: No
+? Compute nodes instance type:  [Use arrows to move, type to filter, ? for more help]
+  m5dn.metal
+  m5.metal
+  m5n.metal
+> m5.xlarge
+  m5zn.metal
+  m6a.12xlarge
+  m6a.16xlarge
+? Compute nodes instance type: m5.xlarge
+? Enable autoscaling: No
+? Compute nodes: 2
+? Host prefix: 23
+? Enable FIPS support: No
+? Encrypt etcd data: No
+? Disable Workload monitoring: No
+? Use cluster-wide proxy: No
+? Additional trust bundle file path (optional): 
+? Enable audit log forwarding to AWS CloudWatch: No
+
+I: Creating cluster 'hcp-01'
+I: To create this cluster again in the future, you can run:
+   rosa create cluster --cluster-name hcp-01 --sts --mode auto --role-arn arn:aws:iam::XXXXXXXXX:role/ManagedOpenShift-HCP-ROSA-Installer-Role --support-role-arn arn:aws:iam::XXXXXXXXX:role/ManagedOpenShift-HCP-ROSA-Support-Role --worker-iam-role arn:aws:iam::XXXXXXXXX:role/ManagedOpenShift-HCP-ROSA-Worker-Role --operator-roles-prefix hcp-01-g8r1 --oidc-config-id 280rqooan3kqqn4o1us1ip073fsrkfm8 --region us-east-2 --version 4.14.2 --replicas 2 --compute-machine-type m5.xlarge --machine-cidr 10.0.0.0/16 --service-cidr 172.30.0.0/16 --pod-cidr 10.128.0.0/14 --host-prefix 23 --subnet-ids subnet-0fb4f75f448b5499c,subnet-0087cb7bb3f628793 --hosted-cp
+I: To view a list of clusters and their status, run 'rosa list clusters'
+I: Cluster 'hcp-01' has been created.
+I: Once the cluster is installed you will need to add an Identity Provider before you can login into the cluster. See 'rosa create idp --help' for more information.
+
+Name:                       hcp-01
+ID:                         280scqkn8ocjoochasq423tg4donvpaq
+External ID:                56549c55-3d86-4ba3-b163-4ca5abf67c59
+Control Plane:              ROSA Service Hosted
+OpenShift Version:          4.14.2
+Channel Group:              stable
+DNS:                        Not ready
+AWS Account:                XXXXXXXXX
+AWS Billing Account:        XXXXXXXXX
+API URL:                    
+Console URL:                
+Region:                     us-east-2
+Availability:
+ - Control Plane:           MultiAZ
+ - Data Plane:              SingleAZ
+Nodes:
+ - Compute (desired):       2
+ - Compute (current):       0
+Network:
+ - Type:                    OVNKubernetes
+ - Service CIDR:            172.30.0.0/16
+ - Machine CIDR:            10.0.0.0/16
+ - Pod CIDR:                10.128.0.0/14
+ - Host Prefix:             /23
+Workload Monitoring:        Enabled
+Ec2 Metadata Http Tokens:   optional
+STS Role ARN:               arn:aws:iam::XXXXXXXXX:role/ManagedOpenShift-HCP-ROSA-Installer-Role
+Support Role ARN:           arn:aws:iam::XXXXXXXXX:role/ManagedOpenShift-HCP-ROSA-Support-Role
+Instance IAM Roles:
+ - Worker:                  arn:aws:iam::XXXXXXXXX:role/ManagedOpenShift-HCP-ROSA-Worker-Role
+Operator IAM Roles:
+ - arn:aws:iam::XXXXXXXXX:role/hcp-01-g8r1-kube-system-capa-controller-manager
+ - arn:aws:iam::XXXXXXXXX:role/hcp-01-g8r1-kube-system-control-plane-operator
+ - arn:aws:iam::XXXXXXXXX:role/hcp-01-g8r1-kube-system-kms-provider
+ - arn:aws:iam::XXXXXXXXX:role/hcp-01-g8r1-openshift-cluster-csi-drivers-ebs-cloud-credentials
+ - arn:aws:iam::XXXXXXXXX:role/hcp-01-g8r1-openshift-cloud-network-config-controller-cloud-cred
+ - arn:aws:iam::XXXXXXXXX:role/hcp-01-g8r1-openshift-image-registry-installer-cloud-credentials
+ - arn:aws:iam::XXXXXXXXX:role/hcp-01-g8r1-openshift-ingress-operator-cloud-credentials
+ - arn:aws:iam::XXXXXXXXX:role/hcp-01-g8r1-kube-system-kube-controller-manager
+Managed Policies:           Yes
+State:                      waiting (Waiting for user action)
+Private:                    No
+Created:                    Dec  9 2023 07:17:00 UTC
+Details Page:               https://console.redhat.com/openshift/details/s/2ZIOeJctRNZzSZe58wMQFmAl2Sd
+OIDC Endpoint URL:          https://rh-oidc.s3.us-east-1.amazonaws.com/280rqooan3kqqn4o1us1ip073fsrkfm8 (Managed)
+Audit Log Forwarding:       disabled
+
+I: Preparing to create operator roles.
+I: Creating roles using 'arn:aws:iam::XXXXXXXXX:user/testuser01'
+I: Created role 'hcp-01-g8r1-openshift-cloud-network-config-controller-cloud-cred' with ARN 'arn:aws:iam::XXXXXXXXX:role/hcp-01-g8r1-openshift-cloud-network-config-controller-cloud-cred'
+I: Created role 'hcp-01-g8r1-kube-system-capa-controller-manager' with ARN 'arn:aws:iam::XXXXXXXXX:role/hcp-01-g8r1-kube-system-capa-controller-manager'
+I: Created role 'hcp-01-g8r1-kube-system-control-plane-operator' with ARN 'arn:aws:iam::XXXXXXXXX:role/hcp-01-g8r1-kube-system-control-plane-operator'
+I: Created role 'hcp-01-g8r1-kube-system-kms-provider' with ARN 'arn:aws:iam::XXXXXXXXX:role/hcp-01-g8r1-kube-system-kms-provider'
+I: Created role 'hcp-01-g8r1-kube-system-kube-controller-manager' with ARN 'arn:aws:iam::XXXXXXXXX:role/hcp-01-g8r1-kube-system-kube-controller-manager'
+I: Created role 'hcp-01-g8r1-openshift-image-registry-installer-cloud-credentials' with ARN 'arn:aws:iam::XXXXXXXXX:role/hcp-01-g8r1-openshift-image-registry-installer-cloud-credentials'
+I: Created role 'hcp-01-g8r1-openshift-ingress-operator-cloud-credentials' with ARN 'arn:aws:iam::XXXXXXXXX:role/hcp-01-g8r1-openshift-ingress-operator-cloud-credentials'
+I: Created role 'hcp-01-g8r1-openshift-cluster-csi-drivers-ebs-cloud-credentials' with ARN 'arn:aws:iam::XXXXXXXXX:role/hcp-01-g8r1-openshift-cluster-csi-drivers-ebs-cloud-credentials'
+I: Preparing to create OIDC Provider.
+I: OIDC provider already exists.
+I: To determine when your cluster is Ready, run 'rosa describe cluster -c hcp-01'.
+I: To watch your cluster installation logs, run 'rosa logs install -c hcp-01 --watch'.
+```
+
+クラスターのデプロイ状態は、次のコマンドで確認できます。`STATE` が `installing` から `ready` に変更されるまで、大体10分ほど待ちます。
+```
+
+$ rosa list cluster
+ID                                NAME    STATE  TOPOLOGY
+280scqkn8ocjoochasq423tg4donvpaq  hcp-01  ready  Hosted CP
+```
+
+これによって、コントロールプレーンのデプロイが、Red Hat SREチームのAWSアカウントにデプロイされます。このコントロールプレーンは、ユーザーには見えず、かつ、AWSリソース利用料金も請求されません。
+
+そしてワーカーノードのデプロイが完了されるまで待ちます。`rosa list machinepool` コマンドで、`REPLICAS` が指定した台数分デプロイされるのを確認できます。
+
+```
+$ rosa list machinepool -c $CLUSTER_NAME
+ID       AUTOSCALING  REPLICAS  INSTANCE TYPE  LABELS    TAINTS    AVAILABILITY ZONE  SUBNET                    VERSION  AUTOREPAIR  
+workers  No           2/2       m5.xlarge                          us-east-2a         subnet-0087cb7bb3f628793  4.14.2   Yes
+
+```
+
+[Note]
+====
+作成したROSA HCPクラスターの情報は、OpenShift Cluster Manager (OCM)の画面からも確認できます。
+下記の画像は、SingleAZ構成(ワーカーノード2台)とMultiAZ構成(ワーカーノード2台と3台)の例です。
+なお、どちらの構成でも、コントロールプレーンはMultiAZ構成となります。
+
+NOTE: OCMは、OpenShiftクラスターのインストール、
+修正、操作、およびアップグレードを可能にするRed Hat提供の管理サービスです。
+OCMを使用すると、単一のダッシュボードからすべてのOpenShiftクラスターを操作できるようになります。詳細については、
+https://access.redhat.com/documentation/ja-jp/red_hat_openshift_service_on_aws/4/html-single/red_hat_openshift_cluster_manager/index[OCMの公式ドキュメント]をご参照ください。
+
+image::rosa/hcp-create/singleaz01.png[]
+image::rosa/hcp-create/multiaz01.png[]
+image::rosa/hcp-create/multiaz02.png[]
+
+NOTE: ワーカーノードをMultiAZの2台構成にする場合は、MultiAZの3台構成でROSA HCPクラスターを作成した後に、 `workers-2` などの名前が付けられたマシンプールを1つ削除して、ワーカーノードを1台削除してください。削除対象のワーカーノード上で後述のOpenShift MonitoringのPrometheus Podが実行されている場合、下記のocコマンド(OpenShift CLI)を管理者アカウント( `cluster-admin` など)で実行する必要があります。このコマンドによって、Prometheus Podの再起動が自動実行されます。Prometheusに関するPodのレプリカ数やモニタリングデータ保存のためのストレージなどは、OpenShiftでは `k8s` という名前のPrometheusリソースによって自動管理されています。
+
+```
+$ oc get prometheus -n openshift-monitoring
+NAME   VERSION   DESIRED   READY   RECONCILED   AVAILABLE   AGE
+k8s    2.53.1    2         2       True         True        17m
+
+$ oc delete pvc -n openshift-monitoring \
+prometheus-data-prometheus-k8s-0 \
+prometheus-data-prometheus-k8s-1
+
+$ oc delete pod -n openshift-monitoring \
+prometheus-k8s-0 \
+prometheus-k8s-1
+```
+====
+
+
+=== ROSA HCPクラスターへのアクセス
+
+ROSA HCPクラスターのコントロールプレーンのデプロイ完了後に、ROSA HCPクラスターにログインするための管理者権限を持つアカウントを作成できます。これには、`rosa create admin` コマンドを実行します。
+
+```
+$ rosa create admin --cluster $CLUSTER_NAME   
+
+I: Admin account has been added to cluster 'hcp-01'.
+I: Please securely store this generated password. If you lose this password you can delete and recreate the cluster admin user.
+I: To login, run the following command:
+
+   oc login https://api.hcp-01.240p.p3.openshiftapps.com:443 --username cluster-admin --password XXXXX-XXXXX-XXXXX-XXXXX
+
+I: It may take several minutes for this access to become active.
+```
+
+ワーカーノードのデプロイが完了していると、ROSA HCPクラスターのコンソールにログインできるようになります。
+このコンソールのURLは、次のコマンドで確認できます。ユーザー名とパスワードは、`rosa create admin` コマンド実行時に表示されたもの(ユーザー名は `cluster-admin` )を使います。
+
+```
+$ rosa describe cluster -c hcp-01 |grep Console
+Console URL:                https://console-openshift-console.apps.rosa.hcp-01.240p.p3.openshiftapps.com
+```
+
+また、ROSA HCPクラスターでは、ローカルユーザーを利用するために、
+https://docs.openshift.com/rosa/authentication/sd-configuring-identity-providers.html[外部の認証プロバイダとの連携設定]が可能です。ROSA HCPクラスターでサポートされている認証プロバイダは下記となります。
+
+* GitHub または GitHub Enterprise
+* GitLab
+* Google
+* LDAP
+* OpenID Connect
+* htpasswd
+
+htpasswdの場合、 `cluster-admin` ユーザー以外での、汎用的な認証プロバイダとしての利用をサポートしていませんので、ご注意ください。
+次のコマンドは、一時的な検証用途としてhtpasswdを利用するための設定例です。
+`testuser1` ~ `testuser100` のパスワード情報を記載したファイル `users.htpasswd` を、
+ROSA HCPクラスターの認証プロバイダとして設定しています。
+
+```
+$ htpasswd -cbB users.htpasswd testuser1 <適当なランダム文字列のパスワード>
+$ for i in {2..100}; do htpasswd -bB users.htpasswd testuser$i <適当なランダム文字列のパスワード>; done
+
+
+$ rosa create idp --type=htpasswd --name=testuser-htpasswd01 --cluster=$CLUSTER_NAME --from-file=users.htpasswd
+I: Configuring IDP for cluster 'hcp-01'
+I: Identity Provider 'testuser-htpasswd01' has been created.
+   It may take several minutes for this access to become active.
+   To add cluster administrators, see 'rosa grant user --help'.
+
+I: To log in to the console, open https://console-openshift-console.apps.rosa.hcp-01.240p.p3.openshiftapps.com and click on 'testuser-htpasswd01'.
+```
+`rosa create idp` コマンドの実行によって、`htpasswd` コマンドで作成した `users.htpasswd` ファイルにある `testuserX` ユーザーを使ってログインできるようになります。
+
+[Note]
+====
+作成したローカルユーザーに対して、ROSAクラスターの管理者権限を付与(grant)または削除(revoke)する場合、
+`rosa grant user` コマンドと `rosa revoke user` コマンドを利用します。
+
+```
+$ rosa grant user cluster-admin --user <ユーザー名> --cluster <ROSAクラスター名>
+$ rosa revoke user cluster-admin --user <ユーザー名> --cluster <ROSAクラスター名>
+```
+====
+
+
+=== ROSA HCPクラスターの削除
+
+不要になったROSA HCPクラスターは `rosa delete cluster` コマンドで削除できます。
+`rosa list cluster` コマンドで確認したROSA HCPクラスター名を指定します。
+また、ROSA HCPクラスターごとに作成されたオペレーターロール(operator roles)も、
+ROSA HCPクラスターの削除が完了した後に
+`rosa delete operator-roles` コマンドで削除しておきます。
+オペレーターロール削除時に指定する接頭辞(prefix)は、`rosa delete cluster` コマンド実行時に表示されます。
+
+OpenID Connectの設定(oidc-config-id)については、別のROSA HCPクラスターを作成する時に使い回せるので、
+ROSA HCPクラスターの作成/削除を複数回試したい場合、OpenID Connectの設定を消去する必要はありません。
+
+NOTE: 本演習をワークショップ形式で実施している場合、
+受講者間でROSA HCPクラスターを共有しているため、ROSA HCPクラスターを削除しないで下さい。
+
+
+```
+$ rosa list cluster
+ID                                NAME    STATE  TOPOLOGY
+280scqkn8ocjoochasq423tg4donvpaq  hcp-01  ready  Hosted CP
+
+$ rosa delete cluster -c hcp-01 --yes
+...<snip>...
+I: Once the cluster is uninstalled use the following commands to remove the above aws resources.
+
+	rosa delete operator-roles --prefix hcp-01-g8r1
+	rosa delete oidc-provider --oidc-config-id 280rqooan3kqqn4o1us1ip073fsrkfm8
+I: To watch your cluster uninstallation logs, run 'rosa logs uninstall -c rosa-hcp-01 --watch'
+
+$ rosa delete operator-roles --prefix hcp-01-g8r1 --mode auto --yes
+```

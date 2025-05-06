@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>プロジェクトのメトリクスデータの確認 :: ROSA Workshop</title>
-    <link rel="canonical" href="https://akubicharm.github.io/rh-workshop-rosa/akubi-project/55-3-rosa-project-metrics.html">
+    <title>ワークショップ環境 :: ROSA Workshop</title>
+    <link rel="canonical" href="https://akubicharm.github.io/rh-workshop-rosa/akubi-project/00_workshop_environment.html">
     <meta name="generator" content="Antora 3.1.10">
     <link rel="stylesheet" href="../_/css/site.css">
 <link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
@@ -102,7 +102,7 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
-  <li class="nav-item" data-depth="1">
+  <li class="nav-item is-current-page" data-depth="1">
     <a class="nav-link" href="00_workshop_environment.html">0. ワークショップ環境</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -126,7 +126,7 @@
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="55-2-rosa-monitoring.html">7. モニタリング</a>
   </li>
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="55-3-rosa-project-metrics.html">8. プロジェクトのメトリクスデータの確認</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -169,116 +169,30 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Try ROSA</a></li>
-    <li><a href="55-3-rosa-project-metrics.html">8. プロジェクトのメトリクスデータの確認</a></li>
+    <li><a href="00_workshop_environment.html">0. ワークショップ環境</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="file:///Users/kay/Github/akubicharm/rh-workshop-rosa/./content/modules/ROOT/pages/55-3-rosa-project-metrics.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="file:///Users/kay/Github/akubicharm/rh-workshop-rosa/./content/modules/ROOT/pages/00_workshop_environment.adoc">Edit this Page</a></div>
 </div>
   <div class="content">
 <article class="doc">
-<h1 class="page">プロジェクトのメトリクスデータの確認</h1>
-<div class="sect1">
-<h2 id="_演習の概要"><a class="anchor" href="#_演習の概要"></a>演習の概要</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>このモジュールでは、ROSAクラスターのコンソールに表示される、各プロジェクトのメトリクスデータを確認します。</p>
-</div>
-<hr>
-<div class="sect2">
-<h3 id="_ダッシュボードタブ"><a class="anchor" href="#_ダッシュボードタブ"></a>「ダッシュボード」タブ</h3>
-<div class="paragraph">
-<p>ROSAクラスターのモニタリング (openshift-monitoring) で収集されるメトリクスデータを見てみます。</p>
-</div>
-<div class="paragraph">
-<p>受講者が最初に作成したプロジェクト( <code>test-project20</code> など)を選択して、
-OpenShiftのコンソールから「開発者」→「モニタリング」メニューを選択すると、
-CPU使用量/メモリ使用量/送受信帯域幅/送受信パケットレート/送受信パケットドロップレート/ストレージIOに関するグラフを確認できます。</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/rosa/metrics/metrics-data1.png" alt="metrics data1">
-</div>
-</div>
-<div class="paragraph">
-<p>また、 管理者アカウントでログインして、 <code>openshift-monitoring</code> などのプロジェクトを選択すると、
-CPUとメモリの使用率に関する情報も確認できます。</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/rosa/metrics/metrics-data2.png" alt="metrics data2">
-</div>
-</div>
-<div class="exampleblock">
-<div class="content">
-<div class="paragraph">
-<p>PodのCPUとメモリ使用については、「リミット(制限)」と「リクエスト(要求)」という値があり、
-Pod実行時には、予め定義された「リミット」の中で、「リクエスト」された量を確保しようとします。
-各ワーカーノードに、「リクエスト」に満たないCPU/メモリリソースしかない場合、
-KubernetesのスケジューラによるPod配置は行われません。</p>
-</div>
-<div class="paragraph">
-<p>「リミット」がない場合、リクエストされた値以上のリソースが使用される可能性があります。
-また、「リミット」のみ定義されている場合は、リミットに一致する値がリソースとして、
-スケジューラによってPodに自動的に割り当てられます。</p>
-</div>
-<div class="paragraph">
-<p>このダッシュボードにある、CPUやメモリの使用率は、これらの「リミット」と「リクエスト」の値に対して
-どのくらい使用されているか、という情報となります。</p>
-</div>
-<div class="paragraph">
-<p>リミットとリクエストについては、
-<a href="https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/">Kubernetesの公式ドキュメント</a>もご参照ください。</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_metricsタブ"><a class="anchor" href="#_metricsタブ"></a>「Metrics」タブ</h3>
-<div class="paragraph">
-<p>「Metrics」タブでは、
-<a href="https://prometheus.io/docs/prometheus/latest/querying/basics/">Prometheusのクエリー(PromQL)</a>によるグラフ表示が可能です。
-予め用意されたクエリー(CPUやメモリー使用量など)を用いて、データを確認してみてください。</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/rosa/metrics/prompql.png" alt="prompql">
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_イベントタブ"><a class="anchor" href="#_イベントタブ"></a>「イベント」タブ</h3>
-<div class="paragraph">
-<p>「イベント」タブでは、プロジェクト上の様々な記録を確認できます。
-PodやPVCなどを作成した際に実行される様々な操作記録(イベント)がストリーミングされていることを確認してみてください。</p>
-</div>
-<div class="paragraph">
-<p>これらのイベントは、OpenShiftの様々なクラスター情報を保存する「etcd」データベースに保存されており、
-保存期間は「3時間」となります。3時間を過ぎたらetcdデータベースから自動的に消去されます。</p>
-</div>
-<div class="admonitionblock note">
-<table>
+<h1 class="page">ワークショップ環境</h1>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
 <tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-この値はAPI ServerのOperatorによって管理されています。
-<a href="https://github.com/openshift/cluster-kube-apiserver-operator/blob/master/bindata/assets/config/defaultconfig.yaml">デフォルトの設定ファイル</a>
-が利用されており、この中の <code>event-ttl</code> 変数で定義されています。
-<a href="https://github.com/openshift/cluster-kube-apiserver-operator/issues/805">Operatorによってこれらの値は保護</a>されており、
-<a href="https://access.redhat.com/solutions/6968044">OpenShiftクラスターの利用者が編集できない</a>ようになっています。
-</td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ROSAコンソール</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://console-openshift-console.apps.rosa.%SUBDOMAIN%" class="bare">https://console-openshift-console.apps.rosa.%SUBDOMAIN%</a></p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ROSA API</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://api.$SUBDOMAIN%:443" class="bare">https://api.$SUBDOMAIN%:443</a></p></td>
+</tr>
+</tbody>
 </table>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/rosa/metrics/events.png" alt="events">
-</div>
-</div>
-</div>
-</div>
-</div>
 </article>
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
   <div class="toc-menu"></div>

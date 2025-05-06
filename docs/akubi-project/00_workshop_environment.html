@@ -177,6 +177,8 @@
   <div class="content">
 <article class="doc">
 <h1 class="page">ワークショップ環境</h1>
+<div id="preamble">
+<div class="sectionbody">
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -184,15 +186,77 @@
 </colgroup>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ROSAコンソール</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ROSA コンソール</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://console-openshift-console.apps.rosa.%SUBDOMAIN%" class="bare">https://console-openshift-console.apps.rosa.%SUBDOMAIN%</a></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">ROSA API</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://api.$SUBDOMAIN%:443" class="bare">https://api.$SUBDOMAIN%:443</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://api.%SUBDOMAIN%:443" class="bare">https://api.%SUBDOMAIN%:443</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OpenShift コンソール（オンプレ環境想定）</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://console-openshift-console.apps.xxx" class="bare">https://console-openshift-console.apps.xxx</a></p></td>
 </tr>
 </tbody>
 </table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_openshiftコンソールのログイン"><a class="anchor" href="#_openshiftコンソールのログイン"></a>1. OpenShiftコンソールのログイン</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>OpenShiftコンソールにブラウザでアクセス</p>
+</li>
+<li>
+<p>ログイン画面で「users-htpasswd」をクリック</p>
+</li>
+<li>
+<p>ユーザ名に「%USERID%」、パスワードに「 openshift 」を入力してログイン</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_openshift_コマンドラインターミナルの利用"><a class="anchor" href="#_openshift_コマンドラインターミナルの利用"></a>2. OpenShift コマンドラインターミナルの利用</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>OpenShift コマンドラインターミナルの利用が可能です。最初に利用するときにはコマンドラインターミナルのPodを実行するためのプロジェクトを一つ作成します。</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>ROSAコンソールにアクセスし、画面右上の「&gt;_」をクリック</p>
+</li>
+<li>
+<p>初期化画面で「CreateProject」を選択し、プロジェクト名に「%USERID%-term」と入力</p>
+</li>
+<li>
+<p>「Start」ボタンをクリック</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ローカル環境でのopenshift_cliの利用"><a class="anchor" href="#_ローカル環境でのopenshift_cliの利用"></a>3. ローカル環境でのOpenShift CLIの利用</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>OpenShift API 経由でログイン</p>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc login -u %USERID% -p {password} https://api.%SUBDOMAIN%:443</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
 </article>
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
   <div class="toc-menu"></div>

@@ -20,7 +20,11 @@ skopeo を使って、OpenShiftの内部のイメージレジストリから、A
 === OpenShift内部のイメージレジストリの公開
 
 OpenShiftの内部のイメージレジストリは、デフォルトでは外部からアクセスできません。
-イメージレジストリに外部からアクセスできるようにするために、以下のコマンドを実行します。
+
+[NOTE]
+====
+ワークショップ環境では、すでにイメージレジストリが公開されているため、以下の手順は不要です。
+イメージレジストリに外部からアクセスできるようにするために、cluster-admin権限を持つユーザで以下のコマンドを実行します。
 
 [.console-input]
 [source,bash]
@@ -37,6 +41,12 @@ export TOKEN=$(oc whoami -t)
 export ROUTE=$(oc get route -n openshift-image-registry -o jsonpath='{.items[0].spec.host}')
 curl -k -H "Authorization: Bearer $TOKEN" "https://$ROUTE/v2/_catalog" | jq 
 ----
+====
+
+リポジトリのURLは以下のようになります。
+---
+default-route-openshift-image-registry.apps.rosa.%SUBDOMAIN%
+---
 
 
 === ECR リポジトリのToken取得
@@ -51,8 +61,7 @@ curl -k -H "Authorization: Bearer $TOKEN" "https://$ROUTE/v2/_catalog" | jq
 [.console-input]
 [source,bash]
 ----
-export AWS_ACCOUNTID=%AWSACCOUNTID%
-skopeo login --tls-verify=false -u AWS -p `aws ecr get-login-password --region us-east-2` $AWS_ACCOUNTID.dkr.ecr.us-east-2.amazonaws.com
+skopeo login --tls-verify=false -u AWS -p `aws ecr get-login-password --region us-east-2` %AWS_ACCOUNTID%.dkr.ecr.us-east-2.amazonaws.com
 ----
 
 . OpenShiftのイメージレジストリにログイン
@@ -60,11 +69,11 @@ skopeo login --tls-verify=false -u AWS -p `aws ecr get-login-password --region u
 [.console-input]
 [source,bash]
 ----
-export ROSA_USER=[OpenShiftのユーザ名]
-export ROUTE=$(oc get route -n openshift-image-registry -o jsonpath='{.items[0].spec.host}')
-export OPENSHIFT_API_URL=
+export ROSA_USER=%USERID%
+export ROUTE=default-route-openshift-image-registry.apps.rosa.%SUBDOMAIN%
+export OPENSHIFT_API_URL=https://api.%SUBDOMAIN%:443
 
-oc login [OpenShift API URL] -u $ROSA_USER -p [パスワード]
+oc login $OPENSHIFT_API_URL -u $ROSA_USER -p {password}
 export TOKEN=$(oc whoami -t)
 skopeo login --tls-verify=false -u $ROSA_USER -p $TOKEN $ROUTE
 ----

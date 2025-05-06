@@ -4,6 +4,32 @@
 :sectnumlevels: 4
 
 |===
-|ROSAコンソール| https://console-openshift-console.apps.rosa.%SUBDOMAIN%
-|ROSA API| https://api.$SUBDOMAIN%:443
+|ROSA コンソール| https://console-openshift-console.apps.rosa.%SUBDOMAIN%
+|ROSA API| https://api.%SUBDOMAIN%:443
+|OpenShift コンソール（オンプレ環境想定）| https://console-openshift-console.apps.xxx
 |===
+
+== OpenShiftコンソールのログイン
+
+. OpenShiftコンソールにブラウザでアクセス
+. ログイン画面で「users-htpasswd」をクリック
+. ユーザ名に「%USERID%」、パスワードに「 {password} 」を入力してログイン
+
+
+== OpenShift コマンドラインターミナルの利用
+
+OpenShift コマンドラインターミナルの利用が可能です。最初に利用するときにはコマンドラインターミナルのPodを実行するためのプロジェクトを一つ作成します。
+
+. ROSAコンソールにアクセスし、画面右上の「>_」をクリック
+. 初期化画面で「CreateProject」を選択し、プロジェクト名に「%USERID%-term」と入力
+. 「Start」ボタンをクリック
+
+== ローカル環境でのOpenShift CLIの利用
+
+. OpenShift API 経由でログイン
++
+[.console-input]
+[source,bash]
+----
+oc login -u %USERID% -p {password} https://api.%SUBDOMAIN%:443
+----

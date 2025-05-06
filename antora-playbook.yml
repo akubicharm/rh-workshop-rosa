@@ -3,6 +3,9 @@ site:
   url: https://akubicharm.github.io/rh-workshop-rosa
   start_page: akubi-project::index.adoc
 
+output:
+  dir: ./docs
+
 content:
   sources:
   - url: .
@@ -12,6 +15,7 @@ content:
 
 asciidoc:
   attributes:
+    password: openshift
     app-project-name: albumapp
     image-albumui: quay.io/keomizo_redhat/albumui-nodejs
     git-albumapi-java: \https://github.com/akubicharm/containerapps-albumapi-java

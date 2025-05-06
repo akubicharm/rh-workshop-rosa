@@ -52,7 +52,7 @@ Album APIアプリケーションは、実行時にバックエンドのPostgres
 {git-albumapi-java}
 +
 . Builder Imageとして *OpenJDK17* が選択されていることを確認
-. 名前を `album-api` に変更
+. 名前を `albumapi` に変更
 . リソースタイプが「Deployment」になっていることを確認
 . 「> 詳細なデプロイメントオプションの表示」をクリックして環境変数を入力。ここでSecretからDB接続情報を取得して環境変数として利用するように設定
 +

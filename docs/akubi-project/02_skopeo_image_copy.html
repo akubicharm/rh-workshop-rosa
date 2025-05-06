@@ -206,8 +206,18 @@
 <div class="sect2">
 <h3 id="_openshift内部のイメージレジストリの公開"><a class="anchor" href="#_openshift内部のイメージレジストリの公開"></a>4.1. OpenShift内部のイメージレジストリの公開</h3>
 <div class="paragraph">
-<p>OpenShiftの内部のイメージレジストリは、デフォルトでは外部からアクセスできません。
-イメージレジストリに外部からアクセスできるようにするために、以下のコマンドを実行します。</p>
+<p>OpenShiftの内部のイメージレジストリは、デフォルトでは外部からアクセスできません。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>ワークショップ環境では、すでにイメージレジストリが公開されているため、以下の手順は不要です。
+イメージレジストリに外部からアクセスできるようにするために、cluster-admin権限を持つユーザで以下のコマンドを実行します。</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -223,6 +233,16 @@
 export ROUTE=$(oc get route -n openshift-image-registry -o jsonpath='{.items[0].spec.host}')
 curl -k -H "Authorization: Bearer $TOKEN" "https://$ROUTE/v2/_catalog" | jq</code></pre>
 </div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>リポジトリのURLは以下のようになります。
+---
+default-route-openshift-image-registry.apps.rosa.%SUBDOMAIN%
+---</p>
 </div>
 </div>
 <div class="sect2">
@@ -241,8 +261,7 @@ curl -k -H "Authorization: Bearer $TOKEN" "https://$ROUTE/v2/_catalog" | jq</cod
 <p>ECRにログイン</p>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export AWS_ACCOUNTID=%AWSACCOUNTID%
-skopeo login --tls-verify=false -u AWS -p `aws ecr get-login-password --region us-east-2` $AWS_ACCOUNTID.dkr.ecr.us-east-2.amazonaws.com</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">skopeo login --tls-verify=false -u AWS -p `aws ecr get-login-password --region us-east-2` %AWS_ACCOUNTID%.dkr.ecr.us-east-2.amazonaws.com</code></pre>
 </div>
 </div>
 </li>
@@ -250,11 +269,11 @@ skopeo login --tls-verify=false -u AWS -p `aws ecr get-login-password --region u
 <p>OpenShiftのイメージレジストリにログイン</p>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export ROSA_USER=[OpenShiftのユーザ名]
-export ROUTE=$(oc get route -n openshift-image-registry -o jsonpath='{.items[0].spec.host}')
-export OPENSHIFT_API_URL=
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export ROSA_USER=%USERID%
+export ROUTE=default-route-openshift-image-registry.apps.rosa.%SUBDOMAIN%
+export OPENSHIFT_API_URL=https://api.%SUBDOMAIN%:443
 
-oc login [OpenShift API URL] -u $ROSA_USER -p [パスワード]
+oc login $OPENSHIFT_API_URL -u $ROSA_USER -p {password}
 export TOKEN=$(oc whoami -t)
 skopeo login --tls-verify=false -u $ROSA_USER -p $TOKEN $ROUTE</code></pre>
 </div>

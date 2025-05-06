@@ -1,0 +1,9 @@
+= ワークショップ環境
+:imagesdir::../assets/images
+:sectnums:
+:sectnumlevels: 4
+
+|===
+|ROSAコンソール| https://console-openshift-console.apps.rosa.%SUBDOMAIN%
+|ROSA API| https://api.$SUBDOMAIN%:443
+|===

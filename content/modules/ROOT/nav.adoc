@@ -1,3 +1,4 @@
+* xref:00_workshop_environment.adoc[0. ワークショップ環境]
 * xref:51-rosa-hcp-create.adoc[1. デモ：ROSA HCPクラスターの作成]
 * xref:01_deploy_album_app.adoc[2. ROSAにアプリケーションをデプロイ]
 * xref:02_skopeo_image_copy.adoc[3. Skopeoを利用したイメージのコピー]

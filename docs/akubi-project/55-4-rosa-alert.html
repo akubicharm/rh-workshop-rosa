@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>アラート設定 :: ROSA Workshop</title>
+    <link rel="canonical" href="https://akubicharm.github.io/rh-workshop-rosa/akubi-project/55-4-rosa-alert.html">
+    <meta name="generator" content="Antora 3.1.10">
+    <link rel="stylesheet" href="../_/css/site.css">
+<link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () { 
+      const urlParams = new URLSearchParams(window.location.search);
+      const userId = urlParams.get('USERID');
+      const subDomain = urlParams.get('SUBDOMAIN');
+      const awsAccountId = urlParams.get('AWSACCOUNTID');
+
+      document.getElementById('subDomain').value = subDomain;
+      document.getElementById('awsAccountId').value = awsAccountId;
+      
+      if (userId) {
+        showUserId( userId );
+      }
+      else {
+        showUserIdForm();
+      }
+    } );
+
+
+    function showUserId( userId ) {
+      document.getElementById('navbar-form-empty').style.display = "none";
+      document.getElementById('navbar-form-filled').style.display = "flex";
+      document.getElementById('username').textContent = userId;
+      document.getElementById('subDomain').value = subDomain;
+      document.getElementById('awsAccountId').value = awsAccountId;
+
+    }
+
+    function showUserIdForm( userId ) {
+      document.getElementById('navbar-form-empty').style.display = "flex";
+      document.getElementById('navbar-form-filled').style.display = "none";
+    }
+
+    function goWithUserId() {
+      elUserIdInput = document.getElementById('userId');
+      elSubDomainInput = document.getElementById('subDomain');
+      elAwsAccountIdInput = document.getElementById('awsAccountId');
+
+      window.location.search = ('&USERID=' + elUserIdInput.value + '&SUBDOMAIN=' + elSubDomainInput.value + '&AWSACCOUNTID=' + elAwsAccountIdInput.value);
+    }
+
+  </script>
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com/en/products/runtimes" target="_blank"><img
+          src="../_/img/octacatkay.png" height="40px" alt="Red Hat Runtimes"></a>
+      <a class="navbar-item" href="https://akubicharm.github.io/rh-workshop-rosa" style="color: white;"><h3>ROSA Workshop</h3></a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://developers.redhat.com/developer-sandbox" target="_blank">Developer Sandbox</a>
+        <div class="navbar-item" id="navbar-form-empty">
+          <span class="navbar-text" style="margin-left: 1rem;">Your Workshop Environment</span>
+          <span class="navbar-text" style="margin-left: 1rem; margin-right: 1rem;">&nbsp;<i style="color: orange;"
+              class="fa fa-exclamation-triangle" aria-hidden="true"></i></span>
+
+          <form action="javascript:void(0);" onsubmit="goWithUserId();">
+            <div class="navbar-item" id="navbar-form-project-filled" style="display: none;">
+              <span class="navbar-text" style="margin-left: 1rem; margin-right: 1rem;">|</span>
+            </div>
+            <input size="40" id="userId" type="text" placeholder="Enter USER ID">
+            <input type="hidden" id="subDomain" name="subDomain" value="">
+            <input type="hidden" id="awsAccountId" name="awsAccountId" value="">
+          </form>
+        </div>
+        
+        <div class="navbar-item" id="navbar-form-filled" style="display: none;">
+          <span class="navbar-text" style="margin-left: 1rem;">Your Workshop Environment</span>
+          <span class="navbar-text" style="margin-left: 1rem; margin-right: 1rem;">|</span>
+          <span class="navbar-text" id="username"></span>
+          <span class="navbar-text" style="margin-left: 1rem; margin-right: 1rem;">&nbsp;<i onclick="recycle();" style="color: green;" class="fa fa-recycle" aria-hidden="true"></i></span>
+        </div>
+
+    </div>
+  </nav>
+</header><div class="body">
+<div class="nav-container" data-component="akubi-project" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html" class=" query-params-link">Try ROSA</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="51-rosa-hcp-create.html">1. デモ：ROSA HCPクラスターの作成</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="01_deploy_album_app.html">2. ROSAにアプリケーションをデプロイ</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="02_skopeo_image_copy.html">3. Skopeoを利用したイメージのコピー</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="53-rosa-ebs.html">4. Amazon EBSの利用</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-1-rosa-log-01.html">5. デモ：ロギング設定</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-1-rosa-log-02.html">6. OpenShiftコンソールでのログ確認</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-2-rosa-monitoring.html">7. モニタリング</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-3-rosa-project-metrics.html">8. プロジェクトのメトリクスデータの確認</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="55-4-rosa-alert.html">9. アラート設定</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="56-rosa-nodes.html">10. デモ：ワーカーノードの追加と削除</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="57-rosa-upgrade.html">11. デモ：ROSA HCPクラスターのアップグレード</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Try ROSA</span>
+    <span class="version">default</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Try ROSA</span>
+      <ul class="versions">
+        <li class="version is-current">
+          <a href="index.html">default</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Try ROSA</a></li>
+    <li><a href="55-4-rosa-alert.html">9. アラート設定</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///Users/kay/Github/akubicharm/rh-workshop-rosa/./content/modules/ROOT/pages/55-4-rosa-alert.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">アラート設定</h1>
+<div class="sect1">
+<h2 id="_演習の概要"><a class="anchor" href="#_演習の概要"></a>演習の概要</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>このモジュールでは、プロジェクトのアプリケーションのアラートを設定します。</p>
+</div>
+<hr>
+<div class="sect2">
+<h3 id="_アラート設定の有効化"><a class="anchor" href="#_アラート設定の有効化"></a>アラート設定の有効化</h3>
+<div class="paragraph">
+<p>ROSAクラスターでは、ROSAの利用者が作成したプロジェクトで実行しているアプリケーションを対象とした、
+アラート設定が可能です。アラート設定をする場合、利用者が作成したプロジェクトのモニタリングが有効になっている必要があります。</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>アラート設定を有効化するには、モニタリングの時と同様に、「openshift-user-workload-monitoring」プロジェクトの
+「user-workload-monitoring-config」設定マップ(ConfigMap)を、
+次のように末尾3行の「alertmanager: &#8230;&#8203;」を追加して保存します。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+本演習を自習している時以外、この設定を適用する必要はありません。
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: user-workload-monitoring-config
+  namespace: openshift-user-workload-monitoring
+data:
+  config.yaml: |
+    prometheus:
+      retention: 30d
+      volumeClaimTemplate:
+        spec:
+          resources:
+            requests:
+              storage: 200Gi
+    alertmanager:
+      enabled: true
+      enableAlertmanagerConfig: true</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_アラート出力用のサンプルアプリケーションの作成"><a class="anchor" href="#_アラート出力用のサンプルアプリケーションの作成"></a>アラート出力用のサンプルアプリケーションの作成</h3>
+<div class="paragraph">
+<p>ユーザープロジェクトを対象としたカスタムアラートを利用するには、
+Prometheusのフォーマットに沿ったメトリクスを出力するアプリケーションを作成しておく必要があります。
+そのためのサンプルアプリがありますので、まずはこちらを適当なプロジェクトで作成します。</p>
+</div>
+<div class="paragraph">
+<p>プロジェクトを選択して、OpenShiftクラスターのWebコンソール右上にある、「+」アイコンをクリックします。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+OpenShiftでは、このインタフェースからYAML/JSON形式のテキストを直接入力して、Podなどのリソースを作成できます。
+</td>
+</tr>
+</table>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/alert/yaml-input1.png" alt="yaml input1">
+</div>
+</div>
+<div class="paragraph">
+<p>サンプルアプリケーションを実行するための、次のYAML形式のテキストを入力して「作成」をクリックします。
+これによって、レプリカ数2の「prometheus-example-app」Podが実行されます。
+また、PrometehusメトリクスをOpenShiftクラスター内部で見るために利用する「prometheus-example-app」
+<a href="https://kubernetes.io/docs/concepts/services-networking/service/">Service</a>も、同時に作成しています。</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: prometheus-example-app
+  name: prometheus-example-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: prometheus-example-app
+  template:
+    metadata:
+      labels:
+        app: prometheus-example-app
+    spec:
+      containers:
+      - image: quay.io/brancz/prometheus-example-app:v0.2.0
+        imagePullPolicy: IfNotPresent
+        name: prometheus-example-app
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: prometheus-example-app
+  name: prometheus-example-app
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+    name: web
+  selector:
+    app: prometheus-example-app
+  type: ClusterIP</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/alert/yaml-input2.png" alt="yaml input2">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_servicemonitorの作成"><a class="anchor" href="#_servicemonitorの作成"></a>ServiceMonitorの作成</h3>
+<div class="paragraph">
+<p>「prometheus-example-app」Serviceを利用したモニタリングのための、
+<a href="https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/">Kubernetesカスタムリソース</a>
+としてServiceMonitorというリソースが、OpenShiftでは利用できるようになっています。
+これを <code>cluster-admin</code> などの管理者アカウントで作成します。
+ローカルユーザーでログインしている場合は、管理者アカウントで再ログインします。</p>
+</div>
+<div class="paragraph">
+<p>先ほどYAML形式のテキストを入力した時と同様に、
+「+」アイコンをクリックしてServiceMonitorを作成します。
+「interval: 30s」で、メトリクスデータをスクレイピング(収集・加工)する間隔を30秒と設定しています。
+また、「selector」を指定して、「app: prometheus-example-app」ラベルを持つServiceを対象としています。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+「prometheus-example-app」Serviceを作成したプロジェクトに、このServiceMonitorを作成します。
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    k8s-app: prometheus-example-monitor
+  name: prometheus-example-monitor
+spec:
+  endpoints:
+  - interval: 30s
+    port: web
+    scheme: http
+    path: /metrics
+  selector:
+    matchLabels:
+      app: prometheus-example-app</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>ここまでの設定により、「モニタリング」メニューの「Metrics」タブから、
+このサンプルアプリケーションにあるメトリクスを見れるようになります。
+「Metrics」タブから「カスタムクエリー」を選択して、「version」を入力してEnterキーを押します。
+すると、次のようなメトリクスを確認できます。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/alert/custom-query.png" alt="custom query">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_アラートルールの作成"><a class="anchor" href="#_アラートルールの作成"></a>アラートルールの作成</h3>
+<div class="paragraph">
+<p>簡単なアラートルールを作成してみます。OpenShiftではアラートルール作成のための、
+KubernetesカスタムリソースであるPrometheusRuleが利用できるようになっています。
+1つ以上のPodがダウンしたときに、アラートを発行する設定としてみます。</p>
+</div>
+<div class="paragraph">
+<p>このサンプルアプリのPodの同時実行数は2となるので、「version」の値の合計値が「2」となっています。
+そこで、1つ以上Podがダウンしたときの「version」の値の合計値が1(2未満)になるか、
+または、全てのPodがダウンして「version」メトリクスが取得できない場合を想定した条件式を「expr:」で設定します。
+「for: 30s」では、アラート発行のための条件式が真となって、アラートが「保留中」状態から「実行中」
+状態になるまでの時間を30秒と設定しています。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+このPrometheusRuleも、ServiceMonitorを作成したプロジェクトを選択して、
+管理者アカウントでYAMLテキストを直接入力して作成します。
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: example-alert
+spec:
+  groups:
+  - name: prometheus-example-app-down
+    rules:
+    - alert: PrometheusExampleAppDown
+      annotations:
+        description: One or more example pods down.
+        summary: Example Pods Down.
+      expr: sum(version) &lt; 2 or absent(version)
+      for: 30s
+      labels:
+        severity: warning</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>作成したアラートルールや、それに伴ったアラート状態は、管理者アカウントでログインしている場合、
+「モニタリング」メニューの「アラートタブ」から確認できます。
+右側にある「・」が3つ縦に並んだアイコンをクリックして、「アラートルールの表示」をクリックすることで、
+「アラートルールの詳細」を確認できます。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/alert/alert-rule-info.png" alt="alert rule info">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_アラートのテスト"><a class="anchor" href="#_アラートのテスト"></a>アラートのテスト</h3>
+<div class="paragraph">
+<p>アラートをテストしてみます。
+「トポロジー」メニューから、「prometheus-example-app」アプリケーションを選択して、
+詳細タブから「↓矢印」を1回クリックして、Podの数を1つ減らします。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/alert/alert-test.png" alt="alert test">
+</div>
+</div>
+<div class="paragraph">
+<p>これにより、アラート状態が「実行中」に変わります。
+管理者アカウントでログインしている場合、「モニタリング」メニューの「アラート」タブから確認できます。
+「One or more example pods down」をクリックすると、アラートの詳細を確認できます。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/alert/firing-alert.png" alt="firing alert">
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+「通知」にあるスイッチをOFFにすると、アラートをサイレンス状態にできます。
+また、アラートをCLIで確認したい場合は、
+<a href="https://access.redhat.com/solutions/4250221">こちらのページにある情報</a>を参考にしてください。
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>「トポロジー」メニューから
+サンプルアプリのPod数を再度2に戻す(Podの詳細タブの「↑」矢印をクリック)と、
+アラート状態が「実行中」から、もともとの何もない状態に戻ります。</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>ROSAやOpenShiftでは、アラートを下記の外部システムに送信できます。</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>PagerDuty</p>
+</li>
+<li>
+<p>Webhook</p>
+</li>
+<li>
+<p>Email</p>
+</li>
+<li>
+<p>Slack</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Gmailに届いたアラートメールの例は、下記の画像のようになります。アラート送信の設定方法については、
+<a href="https://access.redhat.com/documentation/ja-jp/openshift_container_platform/4.14/html/monitoring/sending-notifications-to-external-systems_managing-alerts#doc-wrapper">公式ドキュメント</a>をご参照ください。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/alert/gmail-alert.png" alt="gmail alert">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

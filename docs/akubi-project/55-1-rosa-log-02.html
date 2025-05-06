@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Red Hat Developer Sandbox :: ROSA Workshop</title>
-    <link rel="canonical" href="https://akubicharm.github.io/rh-workshop-rosa/akubi-project/00_developer_sandbox.html">
+    <title>OpenShiftコンソールでのログ確認 :: ROSA Workshop</title>
+    <link rel="canonical" href="https://akubicharm.github.io/rh-workshop-rosa/akubi-project/55-1-rosa-log-02.html">
     <meta name="generator" content="Antora 3.1.10">
     <link rel="stylesheet" href="../_/css/site.css">
 <link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
@@ -118,7 +118,7 @@
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="55-1-rosa-log-01.html">5. デモ：ロギング設定</a>
   </li>
-  <li class="nav-item" data-depth="1">
+  <li class="nav-item is-current-page" data-depth="1">
     <a class="nav-link" href="55-1-rosa-log-02.html">6. OpenShiftコンソールでのログ確認</a>
   </li>
   <li class="nav-item" data-depth="1">
@@ -167,55 +167,122 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Try ROSA</a></li>
-    <li><a href="00_developer_sandbox.html">Red Hat Developer Sandbox</a></li>
+    <li><a href="55-1-rosa-log-02.html">6. OpenShiftコンソールでのログ確認</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="file:///Users/kay/Github/akubicharm/rh-workshop-rosa/./content/modules/ROOT/pages/00_developer_sandbox.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="file:///Users/kay/Github/akubicharm/rh-workshop-rosa/./content/modules/ROOT/pages/55-1-rosa-log-02.adoc">Edit this Page</a></div>
 </div>
   <div class="content">
 <article class="doc">
-<h1 class="page">Red Hat Developer Sandbox</h1>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">:imagesdir</dt>
-<dd>
-<p>../assets/images</p>
-</dd>
-</dl>
-</div>
+<h1 class="page">OpenShiftコンソールでのログ確認</h1>
+<div class="sect1">
+<h2 id="_演習の概要"><a class="anchor" href="#_演習の概要"></a>演習の概要</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>誰でも手軽にOpenShiftを体験できるクラウドベースの環境です。</p>
+<p>このモジュールでは、OpenShiftのコンソールでのログ集約を確認します。</p>
 </div>
+<hr>
+<div class="sect2">
+<h3 id="_openshiftコンソールでのログ確認"><a class="anchor" href="#_openshiftコンソールでのログ確認"></a>OpenShiftコンソールでのログ確認</h3>
 <div class="paragraph">
-<p>Developer SandboxはOpenShiftの共有環境を30日間利用できる仕組みで、自身で作成したアプリケーションをデプロイしたり、チュートリアルにしたがってOpenShiftの利用体験をすることができます。</p>
+<p>OpenShiftコンソールでのログ集約を確認します。管理者アカウント( <code>cluster-admin</code> など)でログインして、左サイドメニューの「モニタリング」→「Logs」から確認できます。</p>
 </div>
-<div class="paragraph">
-<p>対象製品は、</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Red Hat OpenShift</p>
-</li>
-<li>
-<p>Red Hat Dev Spaces</p>
-</li>
-<li>
-<p>Red Hat OpenShift AI</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>下記リンクからアクセスして、利用したい製品を選択します。
-<a href="https://developers.redhat.com/developer-sandbox" class="bare">https://developers.redhat.com/developer-sandbox</a></p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+本演習をワークショップ形式で実施している場合、インストラクターが管理者アカウントを案内します。
+</td>
+</tr>
+</table>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="_images/developer_sandbox.png" alt="Developer Sandbox">
+<img src="_images/rosa/log-02/console-logs.png" alt="console logs">
 </div>
 </div>
 <div class="paragraph">
-<p>事前にRed Hatアカウントの登録が必要となります。</p>
+<p>表示されたログについて、様々なフィルタリング(ネームスペースやコンテナ単位など)ができるので、色々試してみてください。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ローカルユーザーに対するログ集約の参照権限付与"><a class="anchor" href="#_ローカルユーザーに対するログ集約の参照権限付与"></a>ローカルユーザーに対するログ集約の参照権限付与</h3>
+<div class="paragraph">
+<p>ローカルユーザーは自分が作ったコンテナアプリケーションのログを、Pod単位で見ることができます。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/log-02/pod-logs.png" alt="pod logs">
+</div>
+</div>
+<div class="paragraph">
+<p>ただし、デフォルトだと、プロジェクト単位でのログ集約を確認するための権限がローカルユーザーに無いため、下記のようなメッセージが表示されてしまいます。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/log-02/forbidden.png" alt="forbidden">
+</div>
+</div>
+<div class="paragraph">
+<p>そこで、管理者アカウントでローカルユーザーに対するログ集約の参照権限を付与してみます。</p>
+</div>
+<div class="paragraph">
+<p>管理者アカウントで再ログインして、OpenShiftコンソール右上の「+」ボタンから以下のYAMLをインポートします。このYAMLでは <code>view-application-logs</code> というRoleBindingリソースを <code>test-project20</code> プロジェクトに作っています。</p>
+</div>
+<div class="paragraph">
+<p>ユーザーとして <code>testuser20</code> も指定しているので <code>testuser20</code> ユーザーが <code>test-project20</code> プロジェクト上に作られたアプリケーションに関するログ集約を、OpenShiftコンソール上で見れるようになります。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+このYAMLの <code>testuser20</code> と <code>test-project20</code> については、自分が使っているユーザー名とプロジェクト名に適宜変更してください。
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: view-application-logs
+  namespace: test-project20
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-logging-application-view
+subjects:
+- kind: User
+  name: testuser20
+  apiGroup: rbac.authorization.k8s.io</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/log-02/rolebinding.png" alt="rolebinding">
+</div>
+</div>
+<div class="paragraph">
+<p>RoleBindingリソースを作成したあとに <code>testuser20</code> ユーザーで再ログインしてみると、<code>test-project20</code> プロジェクトで作成されたアプリケーションに関するログ集約を確認できます。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/log-02/localuser-logging.png" alt="localuser logging">
+</div>
+</div>
+<div class="paragraph">
+<p>ログ集約については、他のアプリケーションをデプロイすることでも確認してみることができます。
+色々試してみてください。</p>
+</div>
+</div>
+</div>
 </div>
 </article>
 <aside class="toc sidebar" data-title="Contents" data-levels="2">

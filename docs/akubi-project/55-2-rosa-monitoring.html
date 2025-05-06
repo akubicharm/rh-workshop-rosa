@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>モニタリング :: ROSA Workshop</title>
+    <link rel="canonical" href="https://akubicharm.github.io/rh-workshop-rosa/akubi-project/55-2-rosa-monitoring.html">
+    <meta name="generator" content="Antora 3.1.10">
+    <link rel="stylesheet" href="../_/css/site.css">
+<link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () { 
+      const urlParams = new URLSearchParams(window.location.search);
+      const userId = urlParams.get('USERID');
+      const subDomain = urlParams.get('SUBDOMAIN');
+      const awsAccountId = urlParams.get('AWSACCOUNTID');
+
+      document.getElementById('subDomain').value = subDomain;
+      document.getElementById('awsAccountId').value = awsAccountId;
+      
+      if (userId) {
+        showUserId( userId );
+      }
+      else {
+        showUserIdForm();
+      }
+    } );
+
+
+    function showUserId( userId ) {
+      document.getElementById('navbar-form-empty').style.display = "none";
+      document.getElementById('navbar-form-filled').style.display = "flex";
+      document.getElementById('username').textContent = userId;
+      document.getElementById('subDomain').value = subDomain;
+      document.getElementById('awsAccountId').value = awsAccountId;
+
+    }
+
+    function showUserIdForm( userId ) {
+      document.getElementById('navbar-form-empty').style.display = "flex";
+      document.getElementById('navbar-form-filled').style.display = "none";
+    }
+
+    function goWithUserId() {
+      elUserIdInput = document.getElementById('userId');
+      elSubDomainInput = document.getElementById('subDomain');
+      elAwsAccountIdInput = document.getElementById('awsAccountId');
+
+      window.location.search = ('&USERID=' + elUserIdInput.value + '&SUBDOMAIN=' + elSubDomainInput.value + '&AWSACCOUNTID=' + elAwsAccountIdInput.value);
+    }
+
+  </script>
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com/en/products/runtimes" target="_blank"><img
+          src="../_/img/octacatkay.png" height="40px" alt="Red Hat Runtimes"></a>
+      <a class="navbar-item" href="https://akubicharm.github.io/rh-workshop-rosa" style="color: white;"><h3>ROSA Workshop</h3></a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://developers.redhat.com/developer-sandbox" target="_blank">Developer Sandbox</a>
+        <div class="navbar-item" id="navbar-form-empty">
+          <span class="navbar-text" style="margin-left: 1rem;">Your Workshop Environment</span>
+          <span class="navbar-text" style="margin-left: 1rem; margin-right: 1rem;">&nbsp;<i style="color: orange;"
+              class="fa fa-exclamation-triangle" aria-hidden="true"></i></span>
+
+          <form action="javascript:void(0);" onsubmit="goWithUserId();">
+            <div class="navbar-item" id="navbar-form-project-filled" style="display: none;">
+              <span class="navbar-text" style="margin-left: 1rem; margin-right: 1rem;">|</span>
+            </div>
+            <input size="40" id="userId" type="text" placeholder="Enter USER ID">
+            <input type="hidden" id="subDomain" name="subDomain" value="">
+            <input type="hidden" id="awsAccountId" name="awsAccountId" value="">
+          </form>
+        </div>
+        
+        <div class="navbar-item" id="navbar-form-filled" style="display: none;">
+          <span class="navbar-text" style="margin-left: 1rem;">Your Workshop Environment</span>
+          <span class="navbar-text" style="margin-left: 1rem; margin-right: 1rem;">|</span>
+          <span class="navbar-text" id="username"></span>
+          <span class="navbar-text" style="margin-left: 1rem; margin-right: 1rem;">&nbsp;<i onclick="recycle();" style="color: green;" class="fa fa-recycle" aria-hidden="true"></i></span>
+        </div>
+
+    </div>
+  </nav>
+</header><div class="body">
+<div class="nav-container" data-component="akubi-project" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html" class=" query-params-link">Try ROSA</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="51-rosa-hcp-create.html">1. デモ：ROSA HCPクラスターの作成</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="01_deploy_album_app.html">2. ROSAにアプリケーションをデプロイ</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="02_skopeo_image_copy.html">3. Skopeoを利用したイメージのコピー</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="53-rosa-ebs.html">4. Amazon EBSの利用</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-1-rosa-log-01.html">5. デモ：ロギング設定</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-1-rosa-log-02.html">6. OpenShiftコンソールでのログ確認</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="55-2-rosa-monitoring.html">7. モニタリング</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-3-rosa-project-metrics.html">8. プロジェクトのメトリクスデータの確認</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-4-rosa-alert.html">9. アラート設定</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="56-rosa-nodes.html">10. デモ：ワーカーノードの追加と削除</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="57-rosa-upgrade.html">11. デモ：ROSA HCPクラスターのアップグレード</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Try ROSA</span>
+    <span class="version">default</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Try ROSA</span>
+      <ul class="versions">
+        <li class="version is-current">
+          <a href="index.html">default</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Try ROSA</a></li>
+    <li><a href="55-2-rosa-monitoring.html">7. モニタリング</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///Users/kay/Github/akubicharm/rh-workshop-rosa/./content/modules/ROOT/pages/55-2-rosa-monitoring.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">モニタリング</h1>
+<div class="sect1">
+<h2 id="_演習の概要"><a class="anchor" href="#_演習の概要"></a>演習の概要</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>このモジュールでは、Prometheusによるモニタリングに関する情報を確認します。</p>
+</div>
+<hr>
+<div class="paragraph">
+<p>ROSAクラスターは、デフォルトでPrometheusをベースとしたモニタリング機能が有効になっており、
+下記の2つのユースケースで利用されています。</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>ROSAクラスター全体のモニタリング (Platform monitoring)</p>
+</li>
+<li>
+<p>利用者が作成したプロジェクトのモニタリング (User-defined projects monitoring)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>この2つについて、どのようにROSAクラスターで利用されているかを確認していきます。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+本演習をワークショップ形式で実施している場合、このモジュールでは、設定作業を実施しません。
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_クラスター全体のモニタリング"><a class="anchor" href="#_クラスター全体のモニタリング"></a>クラスター全体のモニタリング</h3>
+<div class="paragraph">
+<p>ROSAクラスター全体のリソース利用状況のモニタリング、
+いわゆる「プラットフォームモニタリング」とRed Hatの公式ドキュメントで定義しているものについては、
+Red HatのSREチームによって利用されています。
+<a href="https://docs.openshift.com/rosa/rosa_architecture/rosa_policy_service_definition/rosa-policy-responsibility-matrix.html#rosa-policy-responsibilities_rosa-policy-responsibility-matrix">ROSAの責任分担マトリクス</a>によって、
+プラットフォームモニタリングについては、Red Hatに責任があると定義しているため、
+ROSAの利用者は、ワーカーノードにおけるユーザーアプリの利用状況の監視に集中できるようになっています。</p>
+</div>
+<div class="paragraph">
+<p>ROSAクラスターでは、モニタリング機能を提供するPodが、
+「openshift-monitoring」と「openshift-user-workload-monitoring」という2つのプロジェクトで実行されています。
+プラットフォームモニタリング機能を提供するPodが「openshift-monitoring」プロジェクトで実行されます。
+Red Hat SREチームの監視対象のリストは、
+<a href="https://docs.openshift.com/rosa/monitoring/monitoring-overview.html#default-monitoring-targets_monitoring-overview">公式ドキュメント</a>をご参照ください。
+これらの一部はワーカーノード上で実行されており、ワーカーノードも含めてSREチームにより監視されています。</p>
+</div>
+<div class="paragraph">
+<p>これらの情報は、ROSAクラスターの管理者アカウント( <code>cluster-admin</code> など)でログインすることで確認できます。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+本演習をワークショップ形式で実施している場合、インストラクターが管理者アカウントを案内します。
+</td>
+</tr>
+</table>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/monitoring/monitoring-projects.png" alt="monitoring projects">
+</div>
+</div>
+<div class="paragraph">
+<p>利用者は「openshift-monitoring」プロジェクトで実行されているPodのリストを見ることができます。
+これらのPodがワーカーノードで常に動くことを考慮して、ROSAクラスターのサイジングをする必要があります。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+「openshift-monitoring」プロジェクトのコンポーネントは、
+Red Hat SREチームの管理下に置かれており、
+<a href="https://docs.openshift.com/rosa/monitoring/configuring-the-monitoring-stack.html#support-considerations_configuring-the-monitoring-stack">利用者が設定を変更することを、基本的にサポートしていません</a>。
+</td>
+</tr>
+</table>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/monitoring/openshift-monitoring-pods.png" alt="openshift monitoring pods">
+</div>
+</div>
+<div class="paragraph">
+<p>ROSAクラスターのPrometheusでは、
+Red HatのSREチームによって、ROSAクラスターのコアコンポーネントのメトリクスデータが
+永続ボリュームに一定期間保存されるように設定されています。
+これは、「openshift-monitoring」プロジェクトのPVCの項目を見ることで確認できます。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/monitoring/openshift-monitoring-pvc.png" alt="openshift monitoring pvc">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_利用者が作成したプロジェクトのモニタリング"><a class="anchor" href="#_利用者が作成したプロジェクトのモニタリング"></a>利用者が作成したプロジェクトのモニタリング</h3>
+<div class="paragraph">
+<p>利用者が作成したプロジェクトのモニタリングに関するカスタム設定が適用できるPodが
+「openshift-user-workload-monitoring」プロジェクトで実行されます。
+これらのPodは、 KubernetesのnodeSelctorを利用して、
+<a href="https://docs.openshift.com/rosa/monitoring/configuring-the-monitoring-stack.html#using-node-selectors-to-move-monitoring-components_configuring-the-monitoring-stack">任意のラベルを付けたワーカーノードに移動</a>することができます。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Kubernetesの
+<a href="https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/">nodeSelector</a>は、
+指定したPodを特定のノードで実行するように割り当てる仕組みです。
+</td>
+</tr>
+</table>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/monitoring/openshift-user-workload-monitoring-pods.png" alt="openshift user workload monitoring pods">
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+ROSA HCPクラスターでは、 <code>rosa create cluster</code> でHCPクラスター作成時に、
+<code>disable-workload-monitoring</code> オプションで、利用者のプロジェクトの
+モニタリングを無効化できます。
+</td>
+</tr>
+</table>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>利用者のプロジェクトに関するメトリクスデータは、デフォルトでは永続ボリュームに保存される設定にはなっていません。
+このため、Podの再起動や再作成に伴い、利用者のメトリクスデータが失われる可能性があります。</p>
+</div>
+<div class="paragraph">
+<p>利用者のメトリクスデータを、200GiBの永続ボリュームを利用して30日間保存するような設定をしたい場合、
+「openshift-user-workload-monitoring」プロジェクトの <code>user-workload-monitoring-config</code> という名前の
+設定情報(ConfigMap)を次のYAMLファイルで置き換えることで、
+自動的にデフォルトのストレージクラス(gp3)を用いたPVCが作成されて、メトリクスデータが保存されるようになります。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Kubernetesの
+<a href="https://kubernetes.io/docs/concepts/configuration/configmap/">ConfigMap</a>は、
+アプリケーションで利用される構成データを保存します。
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>OpenShiftでのConfigMapは、コンソールの「管理者向け表示」→「Workloads」→「ConfigMaps」から作成、
+または、既存のConfigMapを編集できます。
+OpenShift CLI(ocコマンド)を用いた設定方法については、
+<a href="https://docs.openshift.com/rosa/monitoring/configuring-the-monitoring-stack.html#configuring_persistent_storage_configuring-the-monitoring-stack">公式ドキュメント</a>をご参照ください。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+本演習を自習している時以外、この設定を適用する必要はありません。
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: user-workload-monitoring-config
+  namespace: openshift-user-workload-monitoring
+data:
+  config.yaml: |
+    prometheus:
+      retention: 30d
+      volumeClaimTemplate:
+        spec:
+          resources:
+            requests:
+              storage: 200Gi</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

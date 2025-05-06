@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Amazon EBSの利用 :: ROSA Workshop</title>
+    <link rel="canonical" href="https://akubicharm.github.io/rh-workshop-rosa/akubi-project/53-rosa-ebs.html">
+    <meta name="generator" content="Antora 3.1.10">
+    <link rel="stylesheet" href="../_/css/site.css">
+<link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () { 
+      const urlParams = new URLSearchParams(window.location.search);
+      const userId = urlParams.get('USERID');
+      const subDomain = urlParams.get('SUBDOMAIN');
+      const awsAccountId = urlParams.get('AWSACCOUNTID');
+
+      document.getElementById('subDomain').value = subDomain;
+      document.getElementById('awsAccountId').value = awsAccountId;
+      
+      if (userId) {
+        showUserId( userId );
+      }
+      else {
+        showUserIdForm();
+      }
+    } );
+
+
+    function showUserId( userId ) {
+      document.getElementById('navbar-form-empty').style.display = "none";
+      document.getElementById('navbar-form-filled').style.display = "flex";
+      document.getElementById('username').textContent = userId;
+      document.getElementById('subDomain').value = subDomain;
+      document.getElementById('awsAccountId').value = awsAccountId;
+
+    }
+
+    function showUserIdForm( userId ) {
+      document.getElementById('navbar-form-empty').style.display = "flex";
+      document.getElementById('navbar-form-filled').style.display = "none";
+    }
+
+    function goWithUserId() {
+      elUserIdInput = document.getElementById('userId');
+      elSubDomainInput = document.getElementById('subDomain');
+      elAwsAccountIdInput = document.getElementById('awsAccountId');
+
+      window.location.search = ('&USERID=' + elUserIdInput.value + '&SUBDOMAIN=' + elSubDomainInput.value + '&AWSACCOUNTID=' + elAwsAccountIdInput.value);
+    }
+
+  </script>
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com/en/products/runtimes" target="_blank"><img
+          src="../_/img/octacatkay.png" height="40px" alt="Red Hat Runtimes"></a>
+      <a class="navbar-item" href="https://akubicharm.github.io/rh-workshop-rosa" style="color: white;"><h3>ROSA Workshop</h3></a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://developers.redhat.com/developer-sandbox" target="_blank">Developer Sandbox</a>
+        <div class="navbar-item" id="navbar-form-empty">
+          <span class="navbar-text" style="margin-left: 1rem;">Your Workshop Environment</span>
+          <span class="navbar-text" style="margin-left: 1rem; margin-right: 1rem;">&nbsp;<i style="color: orange;"
+              class="fa fa-exclamation-triangle" aria-hidden="true"></i></span>
+
+          <form action="javascript:void(0);" onsubmit="goWithUserId();">
+            <div class="navbar-item" id="navbar-form-project-filled" style="display: none;">
+              <span class="navbar-text" style="margin-left: 1rem; margin-right: 1rem;">|</span>
+            </div>
+            <input size="40" id="userId" type="text" placeholder="Enter USER ID">
+            <input type="hidden" id="subDomain" name="subDomain" value="">
+            <input type="hidden" id="awsAccountId" name="awsAccountId" value="">
+          </form>
+        </div>
+        
+        <div class="navbar-item" id="navbar-form-filled" style="display: none;">
+          <span class="navbar-text" style="margin-left: 1rem;">Your Workshop Environment</span>
+          <span class="navbar-text" style="margin-left: 1rem; margin-right: 1rem;">|</span>
+          <span class="navbar-text" id="username"></span>
+          <span class="navbar-text" style="margin-left: 1rem; margin-right: 1rem;">&nbsp;<i onclick="recycle();" style="color: green;" class="fa fa-recycle" aria-hidden="true"></i></span>
+        </div>
+
+    </div>
+  </nav>
+</header><div class="body">
+<div class="nav-container" data-component="akubi-project" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html" class=" query-params-link">Try ROSA</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="51-rosa-hcp-create.html">1. デモ：ROSA HCPクラスターの作成</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="01_deploy_album_app.html">2. ROSAにアプリケーションをデプロイ</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="02_skopeo_image_copy.html">3. Skopeoを利用したイメージのコピー</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="53-rosa-ebs.html">4. Amazon EBSの利用</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-1-rosa-log-01.html">5. デモ：ロギング設定</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-1-rosa-log-02.html">6. OpenShiftコンソールでのログ確認</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-2-rosa-monitoring.html">7. モニタリング</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-3-rosa-project-metrics.html">8. プロジェクトのメトリクスデータの確認</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-4-rosa-alert.html">9. アラート設定</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="56-rosa-nodes.html">10. デモ：ワーカーノードの追加と削除</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="57-rosa-upgrade.html">11. デモ：ROSA HCPクラスターのアップグレード</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Try ROSA</span>
+    <span class="version">default</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Try ROSA</span>
+      <ul class="versions">
+        <li class="version is-current">
+          <a href="index.html">default</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Try ROSA</a></li>
+    <li><a href="53-rosa-ebs.html">4. Amazon EBSの利用</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///Users/kay/Github/akubicharm/rh-workshop-rosa/./content/modules/ROOT/pages/53-rosa-ebs.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Amazon EBSの利用</h1>
+<div class="sect1">
+<h2 id="_演習の概要"><a class="anchor" href="#_演習の概要"></a>演習の概要</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>このモジュールでは、Amazon EBSを利用した、コンテナアプリのデータ保存を実行します。</p>
+</div>
+<hr>
+<div class="sect2">
+<h3 id="_永続ボリューム要求persistent_volume_claim_pvcの作成"><a class="anchor" href="#_永続ボリューム要求persistent_volume_claim_pvcの作成"></a>永続ボリューム要求(Persistent Volume Claim, PVC)の作成</h3>
+<div class="paragraph">
+<p>ROSAには、Amazon Elastic Block Store (EBS) ボリュームを使用するストレージクラスが事前に設定されています。
+このため、
+<a href="https://aws.amazon.com/jp/ebs/general-purpose/">Amazon EBSのgp2, gp3ボリュームタイプ</a>がすぐ使えるようになっています。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/ebs/storage-class.png" alt="storage class">
+</div>
+</div>
+<div class="paragraph">
+<p>このうち、デフォルトのストレージクラスがgp3として設定されており、
+外部ストレージを永続ボリュームとして利用する際のデフォルトとして利用されます。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/ebs/gp3.png" alt="gp3">
+</div>
+</div>
+<div class="paragraph">
+<p>ここでgp3ストレージクラスを利用するために、新しく永続ボリューム要求(Persistent Volume Claim, PVC)を作成します。
+「PersistentVolumeClaimの作成」をクリックして、PVCの名前は、任意の名前(ここではtest-pvc-20)を入力し、
+要求するサイズは1GiBと指定します。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/ebs/pvc-create.png" alt="pvc create">
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+PVCはプロジェクトという名前空間の中にあるリソースです。そのため、各プロジェクトにおいて、同じ名前のPVCが存在できます。
+例えば、プロジェクト1の中にPVC1、プロジェクト2の中にPVC1を作ることができます。
+ただし、1つのプロジェクトの中のリソース名の重複は許可されていないため、この例の場合だと、プロジェクト1の中にPVC1を2つ作ることはできません。
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>このgp3ストレージクラスは、ボリュームバインディングモードが「WaitForFirstConsumer」と指定されており、
+最初にPodから永続ボリューム要求が利用されるまで、永続ボリュームの割り当てが行われない(ステータスがPendingのまま)ようになっています。
+なお、ボリュームバインディングモードが「Immediate」となっている場合、PVC作成後すぐに永続ボリュームの割り当てが行われます。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/ebs/pvc-info.png" alt="pvc info">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_pvcを利用するpodの作成"><a class="anchor" href="#_pvcを利用するpodの作成"></a>PVCを利用するPodの作成</h3>
+<div class="paragraph">
+<p>Podを作成します。「Podの作成」から、次のYAMLファイルを入力してPodを作成します。
+下記の「claimName: test-pvc-20」となっているところは、作成したPVCの名前に応じて、適宜変更してください。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+PodはKubernetes/OpenShift上でのコンテナアプリの実行単位です。
+下記のYAMLファイルにあるとおり、コンテナ(この例ではCentOSコンテナの最新版を利用)や
+コンテナが利用する永続ボリュームの設定などをまとめたものになります。
+Podにはコンテナを複数まとめることもできますが、基本的には1つのPodには1つのコンテナを含むことを推奨しています。
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">apiVersion: v1
+kind: Pod
+metadata:
+ name: test-ebs
+spec:
+ volumes:
+   - name: ebs-storage-vol
+     persistentVolumeClaim:
+       claimName: test-pvc-20
+ containers:
+   - name: test-ebs
+     image: centos:latest
+     command: [ "/bin/bash", "-c", "--" ]
+     args: [ "while true; do touch /mnt/ebs-data/verify-ebs &amp;&amp; echo 'hello ebs' &amp;&amp; sleep 30; done;" ]
+     volumeMounts:
+       - mountPath: "/mnt/ebs-data"
+         name: ebs-storage-vol
+     securityContext:
+       allowPrivilegeEscalation: false
+       seccompProfile:
+         type: RuntimeDefault</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/ebs/pod-create1.png" alt="pod create1">
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/ebs/pod-create2.png" alt="pod create2">
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/ebs/pod-create3.png" alt="pod create3">
+</div>
+</div>
+<div class="paragraph">
+<p>test-ebsという名前でPodが作成されて、Podにより「test-pvc-20」PVCが利用されて、永続ボリュームとして外部ストレージの利用が開始されます。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/ebs/pod-pvc.png" alt="pod pvc">
+</div>
+</div>
+<div class="paragraph">
+<p>このPodのログやターミナルから、永続ボリュームのマウント状況や動作状況を確認できます。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/ebs/pod-log.png" alt="pod log">
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/ebs/pod-terminal.png" alt="pod terminal">
+</div>
+</div>
+<div class="paragraph">
+<p>ここで上記画像にあるように、Podのターミナルから、echoコマンドなどで永続ボリュームのマウントポイントである
+<code>/mnt/ebs-data</code> ディレクトリに、適当なファイルを作成します。
+Podを削除(該当Podを選択して、「アクション」&#8594;「Podの削除」を選択)した後に、
+再度「test-pvc-20」PVCを指定してPodを作成すると、作成したテストファイルが残っていることを確認できます。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Amazon EBSを利用したPVCは、1台のワーカーノードでマウントして利用できます。
+共有ファイルシステムのように、複数台のワーカーノードでマウントして利用することはできません。
+また、
+<a href="https://docs.openshift.com/rosa/storage/persistent_storage/persistent-storage-aws.html#maximum-number-of-ebs-volumes-on-a-node_persistent-storage-aws">1台のワーカーノードに接続できるEBSのボリュームは39個まで</a>となります。
+これはAWSのEBSの制限に起因します。
+</td>
+</tr>
+</table>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>複数台のワーカーノードで利用する共有ファイルシステム用の永続ボリュームとして、Amazon EFSを利用することもできます。
+その場合、Amazon EFSのContainer Storage Interface(CSI. ストレージベンダーが提供するKubernetes用のインタフェース)
+を利用するために、「AWS EFS CSI Driver Operator」をインストール/設定して利用します。</p>
+</div>
+<div class="paragraph">
+<p>ROSA HCPクラスターはAWS STSを利用しているため、
+Amazon EFSを利用するためのIAMロールとポリシーを作成する必要があります。
+詳細については、
+<a href="https://docs.openshift.com/rosa/storage/container_storage_interface/persistent-storage-csi-aws-efs.html">公式ドキュメント</a>をご参照ください。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/ebs/efs-csi-operator.png" alt="efs csi operator">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Page Not Found :: OpenShiftを使ってみよう</title>
+    <title>Page Not Found :: ROSA Workshop</title>
     <meta name="generator" content="Antora 3.1.10">
-    <link rel="stylesheet" href="/rh-workshop/_/css/site.css">
-<link rel="icon" href="/rh-workshop/_/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/rh-workshop-rosa/_/css/site.css">
+<link rel="icon" href="/rh-workshop-rosa/_/img/favicon.ico" type="image/x-icon">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   </head>
   <body class="status-404">
@@ -16,7 +16,11 @@
       const urlParams = new URLSearchParams(window.location.search);
       const userId = urlParams.get('USERID');
       const subDomain = urlParams.get('SUBDOMAIN');
-      const tomcatIP = urlParams.get('TOMCATIP');
+      const awsAccountId = urlParams.get('AWSACCOUNTID');
+
+      document.getElementById('subDomain').value = subDomain;
+      document.getElementById('awsAccountId').value = awsAccountId;
+      
       if (userId) {
         showUserId( userId );
       }
@@ -31,7 +35,7 @@
       document.getElementById('navbar-form-filled').style.display = "flex";
       document.getElementById('username').textContent = userId;
       document.getElementById('subDomain').value = subDomain;
-      document.getElementById('tomcatIP').value = tomcatIP;
+      document.getElementById('awsAccountId').value = awsAccountId;
 
     }
 
@@ -43,17 +47,17 @@
     function goWithUserId() {
       elUserIdInput = document.getElementById('userId');
       elSubDomainInput = document.getElementById('subDomain');
-      elTomcatIPInput = document.getElementById('tomcatIP');
+      elAwsAccountIdInput = document.getElementById('awsAccountId');
 
-      window.location.search = ('&USERID=' + elUserIdInput.value + '&SUBDOMAIN=' + elSubDomainInput.value + '&TOMCATIP=' + elTomcatIPInput.value);
+      window.location.search = ('&USERID=' + elUserIdInput.value + '&SUBDOMAIN=' + elSubDomainInput.value + '&AWSACCOUNTID=' + elAwsAccountIdInput.value);
     }
 
   </script>
   <nav class="navbar">
     <div class="navbar-brand">
       <a class="navbar-item" href="https://www.redhat.com/en/products/runtimes" target="_blank"><img
-          src="/rh-workshop/_/img/octacatkay.png" height="40px" alt="Red Hat Runtimes"></a>
-      <a class="navbar-item" href="https://akubicharm.github.io/rh-workshop" style="color: white;"><h3>OpenShiftを使ってみよう</h3></a>
+          src="/rh-workshop-rosa/_/img/octacatkay.png" height="40px" alt="Red Hat Runtimes"></a>
+      <a class="navbar-item" href="https://akubicharm.github.io/rh-workshop-rosa" style="color: white;"><h3>ROSA Workshop</h3></a>
       <button class="navbar-burger" data-target="topbar-nav">
         <span></span>
         <span></span>
@@ -75,7 +79,7 @@
             </div>
             <input size="40" id="userId" type="text" placeholder="Enter USER ID">
             <input type="hidden" id="subDomain" name="subDomain" value="">
-            <input type="hidden" id="tomcatIP" name="tomcatIP" value="">
+            <input type="hidden" id="awsAccountId" name="awsAccountId" value="">
           </form>
         </div>
         
@@ -95,10 +99,10 @@
 <div class="nav-panel-explore is-active" data-panel="explore">
   <ul class="components">
     <li class="component">
-      <span class="title">Try OpenShift</span>
+      <span class="title">Try ROSA</span>
       <ul class="versions">
         <li class="version">
-          <a href="/rh-workshop/akubi-project/index.html">default</a>
+          <a href="/rh-workshop-rosa/akubi-project/index.html">default</a>
         </li>
       </ul>
     </li>
@@ -110,7 +114,7 @@
 <main class="article">
 <div class="toolbar" role="navigation">
 <button class="nav-toggle"></button>
-  <a href="/rh-workshop/akubi-project/index.html" class="home-link"></a>
+  <a href="/rh-workshop-rosa/akubi-project/index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
 </nav>
 </div>
@@ -131,8 +135,8 @@ If you typed the URL of this page manually, please double check that you entered
   </div>
 </main>
 </div>
-<script src="/rh-workshop/_/js/vendor/clipboard.js"></script>
-<script src="/rh-workshop/_/js/site.js"></script>
-<script async src="/rh-workshop/_/js/vendor/highlight.js"></script>
+<script src="/rh-workshop-rosa/_/js/vendor/clipboard.js"></script>
+<script src="/rh-workshop-rosa/_/js/site.js"></script>
+<script async src="/rh-workshop-rosa/_/js/vendor/highlight.js"></script>
   </body>
 </html>

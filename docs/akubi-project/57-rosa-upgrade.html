@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>ROSA HCPクラスターの更新 :: ROSA Workshop</title>
+    <link rel="canonical" href="https://akubicharm.github.io/rh-workshop-rosa/akubi-project/57-rosa-upgrade.html">
+    <meta name="generator" content="Antora 3.1.10">
+    <link rel="stylesheet" href="../_/css/site.css">
+<link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () { 
+      const urlParams = new URLSearchParams(window.location.search);
+      const userId = urlParams.get('USERID');
+      const subDomain = urlParams.get('SUBDOMAIN');
+      const awsAccountId = urlParams.get('AWSACCOUNTID');
+
+      document.getElementById('subDomain').value = subDomain;
+      document.getElementById('awsAccountId').value = awsAccountId;
+      
+      if (userId) {
+        showUserId( userId );
+      }
+      else {
+        showUserIdForm();
+      }
+    } );
+
+
+    function showUserId( userId ) {
+      document.getElementById('navbar-form-empty').style.display = "none";
+      document.getElementById('navbar-form-filled').style.display = "flex";
+      document.getElementById('username').textContent = userId;
+      document.getElementById('subDomain').value = subDomain;
+      document.getElementById('awsAccountId').value = awsAccountId;
+
+    }
+
+    function showUserIdForm( userId ) {
+      document.getElementById('navbar-form-empty').style.display = "flex";
+      document.getElementById('navbar-form-filled').style.display = "none";
+    }
+
+    function goWithUserId() {
+      elUserIdInput = document.getElementById('userId');
+      elSubDomainInput = document.getElementById('subDomain');
+      elAwsAccountIdInput = document.getElementById('awsAccountId');
+
+      window.location.search = ('&USERID=' + elUserIdInput.value + '&SUBDOMAIN=' + elSubDomainInput.value + '&AWSACCOUNTID=' + elAwsAccountIdInput.value);
+    }
+
+  </script>
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com/en/products/runtimes" target="_blank"><img
+          src="../_/img/octacatkay.png" height="40px" alt="Red Hat Runtimes"></a>
+      <a class="navbar-item" href="https://akubicharm.github.io/rh-workshop-rosa" style="color: white;"><h3>ROSA Workshop</h3></a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://developers.redhat.com/developer-sandbox" target="_blank">Developer Sandbox</a>
+        <div class="navbar-item" id="navbar-form-empty">
+          <span class="navbar-text" style="margin-left: 1rem;">Your Workshop Environment</span>
+          <span class="navbar-text" style="margin-left: 1rem; margin-right: 1rem;">&nbsp;<i style="color: orange;"
+              class="fa fa-exclamation-triangle" aria-hidden="true"></i></span>
+
+          <form action="javascript:void(0);" onsubmit="goWithUserId();">
+            <div class="navbar-item" id="navbar-form-project-filled" style="display: none;">
+              <span class="navbar-text" style="margin-left: 1rem; margin-right: 1rem;">|</span>
+            </div>
+            <input size="40" id="userId" type="text" placeholder="Enter USER ID">
+            <input type="hidden" id="subDomain" name="subDomain" value="">
+            <input type="hidden" id="awsAccountId" name="awsAccountId" value="">
+          </form>
+        </div>
+        
+        <div class="navbar-item" id="navbar-form-filled" style="display: none;">
+          <span class="navbar-text" style="margin-left: 1rem;">Your Workshop Environment</span>
+          <span class="navbar-text" style="margin-left: 1rem; margin-right: 1rem;">|</span>
+          <span class="navbar-text" id="username"></span>
+          <span class="navbar-text" style="margin-left: 1rem; margin-right: 1rem;">&nbsp;<i onclick="recycle();" style="color: green;" class="fa fa-recycle" aria-hidden="true"></i></span>
+        </div>
+
+    </div>
+  </nav>
+</header><div class="body">
+<div class="nav-container" data-component="akubi-project" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html" class=" query-params-link">Try ROSA</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="51-rosa-hcp-create.html">1. デモ：ROSA HCPクラスターの作成</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="01_deploy_album_app.html">2. ROSAにアプリケーションをデプロイ</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="02_skopeo_image_copy.html">3. Skopeoを利用したイメージのコピー</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="53-rosa-ebs.html">4. Amazon EBSの利用</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-1-rosa-log-01.html">5. デモ：ロギング設定</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-1-rosa-log-02.html">6. OpenShiftコンソールでのログ確認</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-2-rosa-monitoring.html">7. モニタリング</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-3-rosa-project-metrics.html">8. プロジェクトのメトリクスデータの確認</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-4-rosa-alert.html">9. アラート設定</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="56-rosa-nodes.html">10. デモ：ワーカーノードの追加と削除</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="57-rosa-upgrade.html">11. デモ：ROSA HCPクラスターのアップグレード</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Try ROSA</span>
+    <span class="version">default</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Try ROSA</span>
+      <ul class="versions">
+        <li class="version is-current">
+          <a href="index.html">default</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Try ROSA</a></li>
+    <li><a href="57-rosa-upgrade.html">11. デモ：ROSA HCPクラスターのアップグレード</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///Users/kay/Github/akubicharm/rh-workshop-rosa/./content/modules/ROOT/pages/57-rosa-upgrade.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">ROSA HCPクラスターの更新</h1>
+<div class="sect1">
+<h2 id="_演習の概要"><a class="anchor" href="#_演習の概要"></a>演習の概要</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>このモジュールでは、ROSA HCPクラスターの更新を実行します。</p>
+</div>
+<hr>
+<div class="paragraph">
+<p>ROSA HCPクラスターは、コントロールプレーンとワーカーノードから構成されており、
+この2つは、個別に更新されます。
+最初にコントロールプレーンを更新して、次にワーカーノードをMachinepool単位で更新していきます。
+更新方法は、SingleAZ/MultiAZ構成の共に同じものとなります。</p>
+</div>
+<div class="paragraph">
+<p>ここでは、OCMとROSA CLIを利用した更新方法をご紹介します。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+本演習をワークショップ形式で実施している場合、
+「ROSA CLIを利用したワーカーノードの更新」以外の項目を実施できません。
+これらの項目については、インストラクターによる紹介のみとなります。
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_ocmを利用したコントロールプレーンの更新"><a class="anchor" href="#_ocmを利用したコントロールプレーンの更新"></a>OCMを利用したコントロールプレーンの更新</h3>
+<div class="paragraph">
+<p><a href="https://access.redhat.com/documentation/ja-jp/red_hat_openshift_service_on_aws/4/html-single/red_hat_openshift_cluster_manager/index">OpenShift Cluster Manager (OCM)</a>を利用して、
+ROSA HCPクラスターを手動で更新できます。ROSAの場合、通常のOpenShiftとは異なり、
+OpenShiftのWebコンソールとCLI(ocコマンド)によるアップグレードができないようになっています。
+そのため、OCMや後述するROSA CLIによるアップグレードを実施する必要があります。</p>
+</div>
+<div class="paragraph">
+<p><a href="https://console.redhat.com/openshift/">OCMにログイン</a>して、
+コントロールプレーンを更新するROSA HCPクラスターを選択し、
+Settingsタブをクリックして、「Update」ボタンをクリックします。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/upgrade/settings.png" alt="settings">
+</div>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>ここで「Update strategy」の「Recurring updates」を選択すると、
+指定した日時の2日前以上にリリースされたz-streamの更新(4.14.5など)が、
+ROSA HCPクラスターのコントロールプレーンに、指定したタイミングで、毎週自動適用されます。</p>
+</div>
+<div class="paragraph">
+<p>新しいマイナーバージョン(4.15や4.16など)がリリースされた場合は、利用者にメールなどで通知され、
+次のマイナーバージョンに更新されることを手動で許可する必要があります。</p>
+</div>
+<div class="paragraph">
+<p>OCMでコントロールプレーンの自動更新を有効にしている場合でも、
+ワーカーノードは手動で更新する必要があります。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/upgrade/recurring-updates.png" alt="recurring updates">
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>更新するバージョンを選択して、「Next」をクリックします。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/upgrade/version-select.png" alt="version select">
+</div>
+</div>
+<div class="paragraph">
+<p>コントロールプレーンの更新をスケジュールします。
+デフォルトでは「Update now」が選択されており、ROSA HCPクラスターでは、
+現在の時刻から約5分後に更新されるようスケジューリングされます。
+指定した時間にアップグレードするには、「Schedule a different time」を選択し、アップグレードの日時を設定します。
+どちらかを選択して、「Next」をクリックします。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/upgrade/schedule.png" alt="schedule">
+</div>
+</div>
+<div class="paragraph">
+<p>更新するバージョンとスケジュールを確認したら、
+「Confirm Update」をクリックして、更新をスケジュールします。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/upgrade/confirm.png" alt="confirm">
+</div>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>コントロールプレーンのアップグレードをキャンセルしたい場合、
+「Cancel this update」からキャンセルできます。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/upgrade/cancel1.png" alt="cancel1">
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/upgrade/cancel2.png" alt="cancel2">
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>これによって、予定された時刻になると、ROSA HCPクラスターのコントロールプレーン更新が開始されます。
+コントロールプレーン更新の所要時間は、およそ15分ほどです。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ocmを利用したワーカーノードの更新"><a class="anchor" href="#_ocmを利用したワーカーノードの更新"></a>OCMを利用したワーカーノードの更新</h3>
+<div class="paragraph">
+<p>ROSA HCPクラスターでは、コントロールプレーンより古いバージョンのワーカーノードのMachinepoolがあると、
+Machinepool単位でワーカーノードを更新できます。</p>
+</div>
+<div class="paragraph">
+<p>OCMでは、更新可能なMachinepoolがある場合、
+指定したMachinepol、または、全てのMachinepoolを更新できます。
+OCMでMachinepoolを更新する場合、約5分後に更新がスケジュールされます。
+更新時刻を指定したい場合、ROSA CLIを利用する必要があります。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/upgrade/mp-upgrade1.png" alt="mp upgrade1">
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/upgrade/mp-upgrade2.png" alt="mp upgrade2">
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/rosa/upgrade/mp-upgrade3.png" alt="mp upgrade3">
+</div>
+</div>
+<div class="paragraph">
+<p>ワーカーノードの更新は、インプレースアップグレードではなく、
+新規ワーカーノードの追加と既存ワーカーノードの削除を実行します。
+Machinepoolに複数台のワーカーノードが紐づいている場合、台数分のワーカーノードを一括作成および削除するのではなく、
+ワーカーノードの新規追加と削除が1台ずつ自動実行されていきます。</p>
+</div>
+<div class="paragraph">
+<p>更新の際に、削除対象のワーカーノード上でPodが実行している場合、Podの停止(SIGTERM)と再作成が実行されますので、
+冗長性を考慮してPodのレプリカ数を複数個設定しておくことを推奨します。Podの停止不可の場合は、
+Podの強制停止(SIGKILL)が実行されます。これについては、
+<a href="https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination">公式ドキュメント</a>をご参照ください。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+このROSA Labでは詳細を扱いませんが、
+<a href="https://kubernetes.io/docs/concepts/workloads/pods/#pods-and-controllers">Podのレプリカ数</a>は、
+Kubernetesのワークロード(デプロイ設定に利用するDeploymentなど)の中で定義できます。
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>なお、1台のワーカーノードの更新(新規ノード作成と既存ノードの削除)にかかる所要時間は、
+およそ5~10分ほどです。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+ROSA HCP 4.15+ではMachinePool内の特定のノードについて、
+<a href="https://docs.openshift.com/container-platform/4.15/nodes/nodes/nodes-nodes-working.html#nodes-nodes-working-evacuating_nodes-nodes-working">Podのスケジューリング可否の設定(cordon/uncordon)とPodの退避(drain)</a>
+を実行できるようになりました。これによって、ワーカーノードの更新や削除に伴って必要となるアプリケーションの事前退避が可能になります。
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_rosa_cliを利用したコントロールプレーンの更新"><a class="anchor" href="#_rosa_cliを利用したコントロールプレーンの更新"></a>ROSA CLIを利用したコントロールプレーンの更新</h3>
+<div class="paragraph">
+<p>OCMのコンソールの他に、ROSA CLIを使用してROSA HCPクラスターの
+コントロールプレーンの更新をスケジュールできます。
+次のコマンドを実行して、利用可能な更新情報を確認します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ rosa list upgrade cluster -c hcp-01
+VERSION  NOTES
+4.14.5   recommended</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>ここで確認した更新情報を適用するためのスケジュールを設定します。
+下記は、2023年12月13日の23時(UTC)に、更新をスケジューリングしている例です。
+<code>rosa upgrade cluster</code> コマンドでは、ROSAクラスターやそのOperatorによって利用されるIAMロールも、
+適宜更新されます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ rosa upgrade cluster -c hcp-01 --control-plane \
+  --schedule-date 2023-12-13 --schedule-time 23:00 \
+  --version 4.14.5 --mode auto --yes
+
+I: Ensuring account and operator role policies for cluster '280scqkn8ocjoochasq423tg4donvpaq' are compatible with upgrade.
+I: Account roles with the prefix 'ManagedOpenShift' have attached managed policies.
+I: Cluster 'hcp-01' operator roles have attached managed policies. An upgrade isn't needed
+I: Account and operator roles for cluster 'hcp-01' are compatible with upgrade
+I: Upgrade successfully scheduled for cluster 'hcp-01'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>指定した更新のスケジュールを確認できます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ rosa list upgrade cluster -c hcp-01
+VERSION  NOTES
+4.14.5   recommended - scheduled for 2023-12-13 23:00 UTC</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>rosa delete upgrade</code> コマンドで、更新のキャンセルをすることができます。
+キャンセルすると、更新のスケジュールが削除されていることを確認できます。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ rosa delete upgrade cluster -c hcp-01
+? Are you sure you want to cancel scheduled upgrade on cluster 'hcp-01'? Yes
+I: Successfully canceled scheduled upgrade on cluster 'hcp-01'
+
+$ rosa list upgrade cluster -c hcp-01
+VERSION  NOTES
+4.14.5   recommended</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_rosa_cliを利用したワーカーノードの更新"><a class="anchor" href="#_rosa_cliを利用したワーカーノードの更新"></a>ROSA CLIを利用したワーカーノードの更新</h3>
+<div class="paragraph">
+<p>Machinepoolを新規に作成して、更新コマンド確認用のワーカーノードを1台追加します。
+この時、選択する「OpenShift version」は、最新より古いバージョンを選択してください。
+また、「Instance type」は、デフォルトの <code>m5.xlarge</code> と区別しやすいように <code>c5.xlarge</code> を指定します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ rosa create machinepool -c hcp-01
+
+I: Enabling interactive mode
+? Machine pool name: mp20
+? OpenShift version:  [Use arrows to move, type to filter, ? for more help]
+  4.14.2
+  4.14.1
+&gt; 4.14.0
+? OpenShift version: 4.14.0
+? Select subnet for a hosted machine pool: No
+? AWS availability zone: us-east-2a
+? Enable autoscaling: No
+? Replicas: 1
+? Labels (optional):
+? Taints (optional):
+I: Fetching instance types
+? Instance type: c5.xlarge
+? Autorepair: Yes
+I: Machine pool 'mp20' created successfully on hosted cluster 'hcp-01'
+I: To view all machine pools, run 'rosa list machinepools -c hcp-01'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>rosa list machinepool</code> コマンドや、
+管理者アカウントでログインしたROSAクラスターのコンソールの「コンピュート」→「Node」メニューから、
+追加したMachinepoolに紐づいたワーカーノードが1台作成されていることを確認できるまで待ちます。</p>
+</div>
+<div class="paragraph">
+<p>ワーカーノードの作成が完了したら、 <code>rosa list upgrade</code> コマンドで、 <code>machinepool</code> オプションを
+指定して、作成したMachinepoolの更新情報を確認します。次の例では、「4.14.1」と「4.14.2」のバージョンに
+更新できることが表示されています。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ rosa list upgrade -c hcp-01 --machinepool mp20
+VERSION  NOTES
+4.14.2   recommended
+4.14.1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Machinepoolの更新を <code>rosa upgrade machinepool</code> コマンドでスケジュールします。
+<code>interactive</code> オプションで、対話形式でパラメータを与えていくように指定します。
+なお、時刻はUTC形式で指定します。日本時間はこれより9時間進んでいることを考慮してください。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ rosa upgrade machinepool mp20 -c hcp-01 --interactive
+
+I: Interactive mode enabled.
+Any optional fields can be left empty and a default will be selected.
+? Enable automatic upgrades: No
+? Please input desired date in format yyyy-mm-dd: 2023-12-13
+? Please input desired UTC time in format HH:mm: 23:00
+? Machine pool version: 4.14.1
+? Are you sure you want to upgrade machine pool 'mp20' to version '4.14.1'? Yes
+I: Upgrade successfully scheduled for the machine pool 'mp20' on cluster 'hcp-01'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>更新実行を待つ場合は、ROSAクラスターに管理者アカウントでログインして、
+「コンピュート」→「Node」メニューから、
+Machinepoolに紐づいたワーカーノードが新規作成されて、削除されることを確認してみてください。</p>
+</div>
+<div class="paragraph">
+<p>Machinepool更新のスケジュールを削除する場合は、 <code>rosa delete upgrade</code> コマンドを実行します。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ rosa delete upgrade -c hcp-01 --machinepool mp20 --yes
+I: Successfully canceled scheduled upgrade for machine pool 'mp20' for cluster 'hcp-01'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>最後に、Machinepool更新について一通り確認した後は、不要になったMachinepoolを、
+<code>rosa delete machinepool</code> コマンドで削除してください。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">$ rosa delete machinepool mp20 -c hcp-01 --yes
+I: Successfully deleted machine pool 'mp20' from hosted cluster 'hcp-01'</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

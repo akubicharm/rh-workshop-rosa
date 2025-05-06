@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Welcome :: OpenShiftを使ってみよう</title>
-    <link rel="canonical" href="https://akubicharm.github.io/rh-workshop/akubi-project/index.html">
+    <title>Welcome :: ROSA Workshop</title>
+    <link rel="canonical" href="https://akubicharm.github.io/rh-workshop-rosa/akubi-project/index.html">
     <meta name="generator" content="Antora 3.1.10">
     <link rel="stylesheet" href="../_/css/site.css">
 <link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
@@ -17,7 +17,11 @@
       const urlParams = new URLSearchParams(window.location.search);
       const userId = urlParams.get('USERID');
       const subDomain = urlParams.get('SUBDOMAIN');
-      const tomcatIP = urlParams.get('TOMCATIP');
+      const awsAccountId = urlParams.get('AWSACCOUNTID');
+
+      document.getElementById('subDomain').value = subDomain;
+      document.getElementById('awsAccountId').value = awsAccountId;
+      
       if (userId) {
         showUserId( userId );
       }
@@ -32,7 +36,7 @@
       document.getElementById('navbar-form-filled').style.display = "flex";
       document.getElementById('username').textContent = userId;
       document.getElementById('subDomain').value = subDomain;
-      document.getElementById('tomcatIP').value = tomcatIP;
+      document.getElementById('awsAccountId').value = awsAccountId;
 
     }
 
@@ -44,9 +48,9 @@
     function goWithUserId() {
       elUserIdInput = document.getElementById('userId');
       elSubDomainInput = document.getElementById('subDomain');
-      elTomcatIPInput = document.getElementById('tomcatIP');
+      elAwsAccountIdInput = document.getElementById('awsAccountId');
 
-      window.location.search = ('&USERID=' + elUserIdInput.value + '&SUBDOMAIN=' + elSubDomainInput.value + '&TOMCATIP=' + elTomcatIPInput.value);
+      window.location.search = ('&USERID=' + elUserIdInput.value + '&SUBDOMAIN=' + elSubDomainInput.value + '&AWSACCOUNTID=' + elAwsAccountIdInput.value);
     }
 
   </script>
@@ -54,7 +58,7 @@
     <div class="navbar-brand">
       <a class="navbar-item" href="https://www.redhat.com/en/products/runtimes" target="_blank"><img
           src="../_/img/octacatkay.png" height="40px" alt="Red Hat Runtimes"></a>
-      <a class="navbar-item" href="https://akubicharm.github.io/rh-workshop" style="color: white;"><h3>OpenShiftを使ってみよう</h3></a>
+      <a class="navbar-item" href="https://akubicharm.github.io/rh-workshop-rosa" style="color: white;"><h3>ROSA Workshop</h3></a>
       <button class="navbar-burger" data-target="topbar-nav">
         <span></span>
         <span></span>
@@ -76,7 +80,7 @@
             </div>
             <input size="40" id="userId" type="text" placeholder="Enter USER ID">
             <input type="hidden" id="subDomain" name="subDomain" value="">
-            <input type="hidden" id="tomcatIP" name="tomcatIP" value="">
+            <input type="hidden" id="awsAccountId" name="awsAccountId" value="">
           </form>
         </div>
         
@@ -95,15 +99,42 @@
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
   <nav class="nav-menu">
-    <h3 class="title"><a href="index.html" class=" query-params-link">Try OpenShift</a></h3>
+    <h3 class="title"><a href="index.html" class=" query-params-link">Try ROSA</a></h3>
 <ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="00_developer_sandbox.html">Red Hat Developer Sandbox</a>
+    <a class="nav-link" href="51-rosa-hcp-create.html">1. デモ：ROSA HCPクラスターの作成</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="01_deploy_album_app.html">OpenShift Sandbox にアプリケーションをデプロイ</a>
+    <a class="nav-link" href="01_deploy_album_app.html">2. ROSAにアプリケーションをデプロイ</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="02_skopeo_image_copy.html">3. Skopeoを利用したイメージのコピー</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="53-rosa-ebs.html">4. Amazon EBSの利用</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-1-rosa-log-01.html">5. デモ：ロギング設定</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-1-rosa-log-02.html">6. OpenShiftコンソールでのログ確認</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-2-rosa-monitoring.html">7. モニタリング</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-3-rosa-project-metrics.html">8. プロジェクトのメトリクスデータの確認</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-4-rosa-alert.html">9. アラート設定</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="56-rosa-nodes.html">10. デモ：ワーカーノードの追加と削除</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="57-rosa-upgrade.html">11. デモ：ROSA HCPクラスターのアップグレード</a>
   </li>
 </ul>
   </li>
@@ -112,12 +143,12 @@
 </div>
 <div class="nav-panel-explore" data-panel="explore">
   <div class="context">
-    <span class="title">Try OpenShift</span>
+    <span class="title">Try ROSA</span>
     <span class="version">default</span>
   </div>
   <ul class="components">
     <li class="component is-current">
-      <span class="title">Try OpenShift</span>
+      <span class="title">Try ROSA</span>
       <ul class="versions">
         <li class="version is-current">
           <a href="index.html">default</a>
@@ -135,17 +166,17 @@
   <a href="index.html" class="home-link is-current"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
-    <li><a href="index.html">Try OpenShift</a></li>
+    <li><a href="index.html">Try ROSA</a></li>
     <li><a href="index.html">Welcome</a></li>
   </ul>
 </nav>
-  <div class="edit-this-page"><a href="file:///Users/kay/Github/akubicharm/rh-workshop/./content/modules/ROOT/pages/index.adoc">Edit this Page</a></div>
+  <div class="edit-this-page"><a href="file:///Users/kay/Github/akubicharm/rh-workshop-rosa/./content/modules/ROOT/pages/index.adoc">Edit this Page</a></div>
 </div>
   <div class="content">
 <article class="doc">
 <h1 class="page">Welcome</h1>
 <div class="paragraph">
-<p>まずは、OpenShiftを勉強しようという方向けの、無償で使える環境を活用した使い方講座です。</p>
+<p>ROSA とコンテナアプリケーションの開発に活用する人向けのワークショップです。</p>
 </div>
 </article>
 <aside class="toc sidebar" data-title="Contents" data-levels="2">

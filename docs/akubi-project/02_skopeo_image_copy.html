@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>コンテナイメージをECRにコピー :: ROSA Workshop</title>
+    <link rel="canonical" href="https://akubicharm.github.io/rh-workshop-rosa/akubi-project/02_skopeo_image_copy.html">
+    <meta name="generator" content="Antora 3.1.10">
+    <link rel="stylesheet" href="../_/css/site.css">
+<link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () { 
+      const urlParams = new URLSearchParams(window.location.search);
+      const userId = urlParams.get('USERID');
+      const subDomain = urlParams.get('SUBDOMAIN');
+      const awsAccountId = urlParams.get('AWSACCOUNTID');
+
+      document.getElementById('subDomain').value = subDomain;
+      document.getElementById('awsAccountId').value = awsAccountId;
+      
+      if (userId) {
+        showUserId( userId );
+      }
+      else {
+        showUserIdForm();
+      }
+    } );
+
+
+    function showUserId( userId ) {
+      document.getElementById('navbar-form-empty').style.display = "none";
+      document.getElementById('navbar-form-filled').style.display = "flex";
+      document.getElementById('username').textContent = userId;
+      document.getElementById('subDomain').value = subDomain;
+      document.getElementById('awsAccountId').value = awsAccountId;
+
+    }
+
+    function showUserIdForm( userId ) {
+      document.getElementById('navbar-form-empty').style.display = "flex";
+      document.getElementById('navbar-form-filled').style.display = "none";
+    }
+
+    function goWithUserId() {
+      elUserIdInput = document.getElementById('userId');
+      elSubDomainInput = document.getElementById('subDomain');
+      elAwsAccountIdInput = document.getElementById('awsAccountId');
+
+      window.location.search = ('&USERID=' + elUserIdInput.value + '&SUBDOMAIN=' + elSubDomainInput.value + '&AWSACCOUNTID=' + elAwsAccountIdInput.value);
+    }
+
+  </script>
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com/en/products/runtimes" target="_blank"><img
+          src="../_/img/octacatkay.png" height="40px" alt="Red Hat Runtimes"></a>
+      <a class="navbar-item" href="https://akubicharm.github.io/rh-workshop-rosa" style="color: white;"><h3>ROSA Workshop</h3></a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://developers.redhat.com/developer-sandbox" target="_blank">Developer Sandbox</a>
+        <div class="navbar-item" id="navbar-form-empty">
+          <span class="navbar-text" style="margin-left: 1rem;">Your Workshop Environment</span>
+          <span class="navbar-text" style="margin-left: 1rem; margin-right: 1rem;">&nbsp;<i style="color: orange;"
+              class="fa fa-exclamation-triangle" aria-hidden="true"></i></span>
+
+          <form action="javascript:void(0);" onsubmit="goWithUserId();">
+            <div class="navbar-item" id="navbar-form-project-filled" style="display: none;">
+              <span class="navbar-text" style="margin-left: 1rem; margin-right: 1rem;">|</span>
+            </div>
+            <input size="40" id="userId" type="text" placeholder="Enter USER ID">
+            <input type="hidden" id="subDomain" name="subDomain" value="">
+            <input type="hidden" id="awsAccountId" name="awsAccountId" value="">
+          </form>
+        </div>
+        
+        <div class="navbar-item" id="navbar-form-filled" style="display: none;">
+          <span class="navbar-text" style="margin-left: 1rem;">Your Workshop Environment</span>
+          <span class="navbar-text" style="margin-left: 1rem; margin-right: 1rem;">|</span>
+          <span class="navbar-text" id="username"></span>
+          <span class="navbar-text" style="margin-left: 1rem; margin-right: 1rem;">&nbsp;<i onclick="recycle();" style="color: green;" class="fa fa-recycle" aria-hidden="true"></i></span>
+        </div>
+
+    </div>
+  </nav>
+</header><div class="body">
+<div class="nav-container" data-component="akubi-project" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html" class=" query-params-link">Try ROSA</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="51-rosa-hcp-create.html">1. デモ：ROSA HCPクラスターの作成</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="01_deploy_album_app.html">2. ROSAにアプリケーションをデプロイ</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="02_skopeo_image_copy.html">3. Skopeoを利用したイメージのコピー</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="53-rosa-ebs.html">4. Amazon EBSの利用</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-1-rosa-log-01.html">5. デモ：ロギング設定</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-1-rosa-log-02.html">6. OpenShiftコンソールでのログ確認</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-2-rosa-monitoring.html">7. モニタリング</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-3-rosa-project-metrics.html">8. プロジェクトのメトリクスデータの確認</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="55-4-rosa-alert.html">9. アラート設定</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="56-rosa-nodes.html">10. デモ：ワーカーノードの追加と削除</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="57-rosa-upgrade.html">11. デモ：ROSA HCPクラスターのアップグレード</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Try ROSA</span>
+    <span class="version">default</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Try ROSA</span>
+      <ul class="versions">
+        <li class="version is-current">
+          <a href="index.html">default</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Try ROSA</a></li>
+    <li><a href="02_skopeo_image_copy.html">3. Skopeoを利用したイメージのコピー</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="file:///Users/kay/Github/akubicharm/rh-workshop-rosa/./content/modules/ROOT/pages/02_skopeo_image_copy.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">コンテナイメージをECRにコピー</h1>
+<div class="sect1">
+<h2 id="_ゴール"><a class="anchor" href="#_ゴール"></a>1. ゴール</h2>
+<div class="sectionbody">
+
+</div>
+</div>
+<div class="sect1">
+<h2 id="_skopeo"><a class="anchor" href="#_skopeo"></a>2. Skopeo</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="https://www.redhat.com/ja/topics/containers/what-is-skopeo" class="bare">https://www.redhat.com/ja/topics/containers/what-is-skopeo</a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_準備_skopeo_のインストール"><a class="anchor" href="#_準備_skopeo_のインストール"></a>3. 準備 skopeo のインストール</h2>
+<div class="sectionbody">
+
+</div>
+</div>
+<div class="sect1">
+<h2 id="_skopeo_cli_を使ったコンテナイメージのコピー"><a class="anchor" href="#_skopeo_cli_を使ったコンテナイメージのコピー"></a>4. skopeo cli を使ったコンテナイメージのコピー</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>skopeo を使って、OpenShiftの内部のイメージレジストリから、AWS ECRにコンテナイメージをコピーします。</p>
+</div>
+<div class="sect2">
+<h3 id="_openshift内部のイメージレジストリの公開"><a class="anchor" href="#_openshift内部のイメージレジストリの公開"></a>4.1. OpenShift内部のイメージレジストリの公開</h3>
+<div class="paragraph">
+<p>OpenShiftの内部のイメージレジストリは、デフォルトでは外部からアクセスできません。
+イメージレジストリに外部からアクセスできるようにするために、以下のコマンドを実行します。</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc patch configs.imageregistry.operator.openshift.io/cluster --patch '{"spec":{"defaultRoute":true}}' --type=merge</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>公開されたリポジトリのイメージ一覧を取得します。</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export TOKEN=$(oc whoami -t)
+export ROUTE=$(oc get route -n openshift-image-registry -o jsonpath='{.items[0].spec.host}')
+curl -k -H "Authorization: Bearer $TOKEN" "https://$ROUTE/v2/_catalog" | jq</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ecr_リポジトリのtoken取得"><a class="anchor" href="#_ecr_リポジトリのtoken取得"></a>4.2. ECR リポジトリのToken取得</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_openshiftのtoken取得"><a class="anchor" href="#_openshiftのtoken取得"></a>4.3. OpenShiftのToken取得</h3>
+
+</div>
+<div class="sect2">
+<h3 id="_skopeo_を使ってコンテナイメージのコピー"><a class="anchor" href="#_skopeo_を使ってコンテナイメージのコピー"></a>4.4. Skopeo を使ってコンテナイメージのコピー</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>ECRにログイン</p>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export AWS_ACCOUNTID=%AWSACCOUNTID%
+skopeo login --tls-verify=false -u AWS -p `aws ecr get-login-password --region us-east-2` $AWS_ACCOUNTID.dkr.ecr.us-east-2.amazonaws.com</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>OpenShiftのイメージレジストリにログイン</p>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export ROSA_USER=[OpenShiftのユーザ名]
+export ROUTE=$(oc get route -n openshift-image-registry -o jsonpath='{.items[0].spec.host}')
+export OPENSHIFT_API_URL=
+
+oc login [OpenShift API URL] -u $ROSA_USER -p [パスワード]
+export TOKEN=$(oc whoami -t)
+skopeo login --tls-verify=false -u $ROSA_USER -p $TOKEN $ROUTE</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>skopeo copy docker://$ROUTE/user02-app/containerapps-albumui docker://$AWS_ACCOUNTID.dkr.ecr.us-east-2.amazonaws.com/album/albumui:latest</p>
+</div>
+<div class="paragraph">
+<p>コピー元、コピー先のリポジトリにログインしていない場合、credential を指定してコピーすることができます。</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc login [OpenShift API URL] -u $OCP_USER -p [パスワード]
+export TOKEN=$(oc whoami -t)
+export ROUTE=$(oc get route -n openshift-image-registry -o jsonpath='{.items[0].spec.host}')
+
+skopeo copy --src-creds $OCP_USER:$TOKEN docker://$ROUTE/%USERID%-app/albumui --dest-creds AWS:$ECR_TOKEN docker://654654224671.dkr.ecr.us-east-2.amazonaws.com/album/albumui:latest</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_オプションecrのイメージを利用したデプロイ"><a class="anchor" href="#_オプションecrのイメージを利用したデプロイ"></a>5. (オプション）ECRのイメージを利用したデプロイ</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Private な ECR に格納されたコンテナイメージを利用してオンプレミスのOpenShiftにアプリケーションをデプロイします。</p>
+</div>
+<div class="sect2">
+<h3 id="_openshiftにログイン"><a class="anchor" href="#_openshiftにログイン"></a>5.1. OpenShiftにログイン</h3>
+<div class="paragraph">
+<p>CLIを利用してOpenShiftにログインします。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ecr用のimage_pull_secretの作成"><a class="anchor" href="#_ecr用のimage_pull_secretの作成"></a>5.2. ECR用のImage Pull Secretの作成</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>OpenShiftのプロジェクトを作成</p>
+</li>
+<li>
+<p>ECRのイメージをPullするためのSecretを作成</p>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc create secret docker-registry ecr-secret --
+docker-server=$AWS_ACCOUNTID.dkr.ecr.us-east-2.amazonaws.com --docker-user
+name=AWS --docker-password=$(aws ecr get-login-password)</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>OpenShiftのGUI または Manifest を利用してアプリケーションをデプロイします。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_アプリケーションをデプロイ_guiの利用"><a class="anchor" href="#_アプリケーションをデプロイ_guiの利用"></a>5.3. アプリケーションをデプロイ (GUIの利用)</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>左上のパースペクティブで「開発者」モードを選択</p>
+</li>
+<li>
+<p>左のメニューで「+追加」をクリック</p>
+</li>
+<li>
+<p>右のメニューで「コンテナイメージ」をクリック</p>
+</li>
+<li>
+<p>外部のイメージレジストリからのイメージ名でECRのURIを入力</p>
+<div class="paragraph">
+<p><code>[AWS_ACCOUNT_ID].dkr.ecr.us-east-2.amazonaws.com/album/albumui:latest</code></p>
+</div>
+</li>
+<li>
+<p>画面下部の「作成」ボタンをクリック</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_アプリケーションのデプロイmanifestの利用"><a class="anchor" href="#_アプリケーションのデプロイmanifestの利用"></a>5.4. アプリケーションのデプロイ(Manifestの利用)</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Deploymentのマニフェストファイルを作成して適用</p>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export AWS_ACCOUNTID=654654224671
+oc create deployment albumui --image=$AWS_ACCOUNTID.dkr.ecr.us-east-2.amazonaws.com/album/albumui:latest --dry-run=client -o yaml &gt; deployment-albumui.yaml
+
+oc apply -f deployment-albumui.yaml</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Serviceのマニフェストを作成して適用</p>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc create service clusterip albumui --tcp=8080 --dry-run=client -o yaml &gt; service-albumui.yaml
+
+oc apply -f service-albumui.yaml</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Routeのマニフェストを作成して適用</p>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc create route edge albumui --service=albumui --port 8080 --dry-run=client -o yaml &gt; route-albumui.yaml
+oc apply -f route-albumui.yaml</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

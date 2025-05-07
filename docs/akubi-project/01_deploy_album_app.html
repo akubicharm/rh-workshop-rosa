@@ -207,14 +207,16 @@ oc apply -f https://raw.githubusercontent.com/akubicharm/containerapps-albumapi-
 </div>
 </div>
 <div class="paragraph">
-<p>作成されたリソースを確認します。</p>
+<p>作成されたリソースを確認します。<code>postgresql-</code> で始まる名前のPodのステータス <strong>Running</strong> になればOKです。`</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get secret
 oc get pvc
 oc get deployment
-oc get pods</code></pre>
+oc get pods
+
+oc get pods -w</code></pre>
 </div>
 </div>
 </div>

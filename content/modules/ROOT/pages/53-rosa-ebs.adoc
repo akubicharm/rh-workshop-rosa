@@ -42,7 +42,8 @@ image::rosa/ebs/pvc-info.png[]
 === PVCを利用するPodの作成
 
 Podを作成します。「Podの作成」から、次のYAMLファイルを入力してPodを作成します。
-下記の「claimName: test-pvc-20」となっているところは、作成したPVCの名前に応じて、適宜変更してください。
+
+// 下記の「claimName: test-pvc-20」となっているところは、作成したPVCの名前に応じて、適宜変更してください。
 
 
 NOTE: PodはKubernetes/OpenShift上でのコンテナアプリの実行単位です。
@@ -50,14 +51,16 @@ NOTE: PodはKubernetes/OpenShift上でのコンテナアプリの実行単位で
 コンテナが利用する永続ボリュームの設定などをまとめたものになります。
 Podにはコンテナを複数まとめることもできますが、基本的には1つのPodには1つのコンテナを含むことを推奨しています。
 
+画面右上（ユーザ名の並び）にある「+」をクリックして、下記のYAML定義を貼り付けます。
 
 [.console-input]
-[source,sh]
+[source,yaml]
 ----
 apiVersion: v1
 kind: Pod
 metadata:
  name: test-ebs
+ namespace: %USERID%-app
 spec:
  volumes:
    - name: ebs-storage-vol

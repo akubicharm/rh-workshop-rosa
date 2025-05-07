@@ -243,8 +243,7 @@ PVCはプロジェクトという名前空間の中にあるリソースです�
 <div class="sect2">
 <h3 id="_pvcを利用するpodの作成"><a class="anchor" href="#_pvcを利用するpodの作成"></a>PVCを利用するPodの作成</h3>
 <div class="paragraph">
-<p>Podを作成します。「Podの作成」から、次のYAMLファイルを入力してPodを作成します。
-下記の「claimName: test-pvc-20」となっているところは、作成したPVCの名前に応じて、適宜変更してください。</p>
+<p>Podを作成します。「Podの作成」から、次のYAMLファイルを入力してPodを作成します。</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -261,12 +260,16 @@ Podにはコンテナを複数まとめることもできますが、基本的�
 </tr>
 </table>
 </div>
+<div class="paragraph">
+<p>画面右上（ユーザ名の並び）にある「+」をクリックして、下記のYAML定義を貼り付けます。</p>
+</div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">apiVersion: v1
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: v1
 kind: Pod
 metadata:
  name: test-ebs
+ namespace: %USERID%-app
 spec:
  volumes:
    - name: ebs-storage-vol

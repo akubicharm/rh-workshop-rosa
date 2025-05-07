@@ -27,7 +27,7 @@ oc new-project %USERID%-app
 oc apply -f https://raw.githubusercontent.com/akubicharm/containerapps-albumapi-java/main/openshift/postgresql/postgresql.yaml
 ----
 
-作成されたリソースを確認します。
+作成されたリソースを確認します。`postgresql-` で始まる名前のPodのステータス *Running* になればOKです。`
 
 [.console-input]
 [source,bash]
@@ -36,6 +36,8 @@ oc get secret
 oc get pvc
 oc get deployment
 oc get pods
+
+oc get pods -w
 ----
 
 == Album API アプリケーションのデプロイ

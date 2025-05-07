@@ -275,6 +275,7 @@ metadata:
   labels:
     app: prometheus-example-app
   name: prometheus-example-app
+  namespace: %USERID%-app
 spec:
   replicas: 2
   selector:
@@ -296,6 +297,7 @@ metadata:
   labels:
     app: prometheus-example-app
   name: prometheus-example-app
+  namespace: %USERID%-app
 spec:
   ports:
   - port: 8080
@@ -348,6 +350,7 @@ metadata:
   labels:
     k8s-app: prometheus-example-monitor
   name: prometheus-example-monitor
+  namespace: %USERID%-app
 spec:
   endpoints:
   - interval: 30s
@@ -404,6 +407,7 @@ KubernetesカスタムリソースであるPrometheusRuleが利用できるよ�
 kind: PrometheusRule
 metadata:
   name: example-alert
+  namespace: %USERID%-app
 spec:
   groups:
   - name: prometheus-example-app-down

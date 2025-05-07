@@ -3,6 +3,21 @@
 :sectnums:
 :sectnumlevels: 4
 
+== ツールのインストール
+
+=== OpenShift CLI のインストール
+
+演習環境が利用可能でない場合は、 https://docs.redhat.com/ja/documentation/openshift_container_platform/4.18/html/cli_tools/openshift-cli-oc#cli-installing-cli_cli-developer-commands に従ってインストールしてください。
+
+演習環境が利用可能な場合は、 https://console-openshift-console.apps.rosa.%SUBDOMAIN%/command-line-tools にアクセスして必要なCLIをインストールしてください。
+
+
+=== skopeo のインストール
+
+https://www.redhat.com/ja/topics/containers/what-is-skopeo を参考にしてインストールしてください。
+
+== 各種環境のURLとログイン方法
+
 |===
 |ROSA コンソール| https://console-openshift-console.apps.rosa.%SUBDOMAIN%
 |ROSA API| https://api.%SUBDOMAIN%:443
@@ -10,14 +25,14 @@
 |AWS コンソール|https://%AWSACCOUNTID%.signin.aws.amazon.com/console 
 |===
 
-== OpenShiftコンソールのログイン
+=== OpenShiftコンソールのログイン
 
 . OpenShiftコンソールにブラウザでアクセス
 . ログイン画面で「users-htpasswd」をクリック
 . ユーザ名に「%USERID%」、パスワードに「 {password} 」を入力してログイン
 
 
-== OpenShift コマンドラインターミナルの利用
+=== OpenShift コマンドラインターミナルの利用
 
 OpenShift コマンドラインターミナルの利用が可能です。最初に利用するときにはコマンドラインターミナルのPodを実行するためのプロジェクトを一つ作成します。
 
@@ -25,16 +40,13 @@ OpenShift コマンドラインターミナルの利用が可能です。最初�
 . 初期化画面で「CreateProject」を選択し、プロジェクト名に「%USERID%-term」と入力
 . 「Start」ボタンをクリック
 
-== ローカル環境でのOpenShift CLIの利用
+=== ローカル環境でのOpenShift CLIの利用
 
 . OpenShift API 経由でログイン
 +
 [.console-input]
 [source,bash]
 ----
-oc login -u %USERID% -p {password} https://api.%SUBDOMAIN%:443
+oc login -u %USERID% -p openshift https://api.%SUBDOMAIN%:443
 ----
 
-== skopeo のインストール
-
-https://www.redhat.com/ja/topics/containers/what-is-skopeo を参考にしてインストールしてください。

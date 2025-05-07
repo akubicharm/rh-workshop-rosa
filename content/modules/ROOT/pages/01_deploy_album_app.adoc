@@ -49,7 +49,7 @@ Album APIアプリケーションは、実行時にバックエンドのPostgres
 . 右のメニューで「Gitリポジトリ - Gitからのインポート」をクリック
 . GitリポジトリURLの情報を入力
 +
-{git-albumapi-java}
+{git-albumapi-java}/%USERID%/albumapi
 +
 . Builder Imageとして *OpenJDK17* が選択されていることを確認
 . 名前を `albumapi` に変更

@@ -298,6 +298,14 @@ arn:aws:iam::&lt;AWS_ACCOUNT_ID&gt;:oidc-provider/oidc.op1.openshiftapps.com/289
 <p>AWSのコンソールまたはAWS CLIで、
 <a href="https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/create-bucket-overview.html">Amazon S3の汎用バケットを作成</a>します。</p>
 </div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">aws s3api create-bucket \
+    --bucket amzn-s3-demo-bucket1$(uuidgen | tr -d - | tr '[:upper:]' '[:lower:]' ) \
+    --region us-east-2 \
+    --create-bucket-configuration LocationConstraint=us-east-2</code></pre>
+</div>
+</div>
 <div class="paragraph">
 <p>AWSのコンソールから汎用バケットを作成する場合、バケット名を任意の名前で指定する以外は、全てデフォルトのパラメーターのままでバケットを作成します。なお、バケットのリージョンはどこでも構いません。ROSA HCPクラスターがあるリージョンとは別のリージョンにバケットを作成することもできます。</p>
 </div>

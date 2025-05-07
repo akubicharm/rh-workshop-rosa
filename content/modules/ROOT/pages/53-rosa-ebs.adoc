@@ -80,9 +80,9 @@ spec:
          type: RuntimeDefault
 ----
 
-image::rosa/ebs/pod-create1.png[]
-image::rosa/ebs/pod-create2.png[]
-image::rosa/ebs/pod-create3.png[]
+// image::rosa/ebs/pod-create1.png[]
+// image::rosa/ebs/pod-create2.png[]
+// image::rosa/ebs/pod-create3.png[]
 
 test-ebsという名前でPodが作成されて、Podにより「test-pvc-20」PVCが利用されて、永続ボリュームとして外部ストレージの利用が開始されます。
 
@@ -97,6 +97,8 @@ image::rosa/ebs/pod-terminal.png[]
 `/mnt/ebs-data` ディレクトリに、適当なファイルを作成します。
 Podを削除(該当Podを選択して、「アクション」->「Podの削除」を選択)した後に、
 再度「test-pvc-20」PVCを指定してPodを作成すると、作成したテストファイルが残っていることを確認できます。
+
+確認が終わったら「アクション」→ 「Podの削除」を選択して、Podを削除してください。
 
 
 NOTE: Amazon EBSを利用したPVCは、1台のワーカーノードでマウントして利用できます。

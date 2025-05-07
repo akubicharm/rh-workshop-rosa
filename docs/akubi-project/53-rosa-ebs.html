@@ -289,21 +289,6 @@ spec:
          type: RuntimeDefault</code></pre>
 </div>
 </div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/rosa/ebs/pod-create1.png" alt="pod create1">
-</div>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/rosa/ebs/pod-create2.png" alt="pod create2">
-</div>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/rosa/ebs/pod-create3.png" alt="pod create3">
-</div>
-</div>
 <div class="paragraph">
 <p>test-ebsという名前でPodが作成されて、Podにより「test-pvc-20」PVCが利用されて、永続ボリュームとして外部ストレージの利用が開始されます。</p>
 </div>
@@ -330,6 +315,9 @@ spec:
 <code>/mnt/ebs-data</code> ディレクトリに、適当なファイルを作成します。
 Podを削除(該当Podを選択して、「アクション」&#8594;「Podの削除」を選択)した後に、
 再度「test-pvc-20」PVCを指定してPodを作成すると、作成したテストファイルが残っていることを確認できます。</p>
+</div>
+<div class="paragraph">
+<p>確認が終わったら「アクション」→ 「Podの削除」を選択して、Podを削除してください。</p>
 </div>
 <div class="admonitionblock note">
 <table>

@@ -186,15 +186,16 @@
 <div class="sect1">
 <h2 id="_skopeo"><a class="anchor" href="#_skopeo"></a>2. Skopeo</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p><a href="https://www.redhat.com/ja/topics/containers/what-is-skopeo" class="bare">https://www.redhat.com/ja/topics/containers/what-is-skopeo</a></p>
-</div>
+
 </div>
 </div>
 <div class="sect1">
 <h2 id="_準備_skopeo_のインストール"><a class="anchor" href="#_準備_skopeo_のインストール"></a>3. 準備 skopeo のインストール</h2>
 <div class="sectionbody">
-
+<div class="paragraph">
+<p>cli がインストールされていない場合は、以下の手順でインストールしてください。
+<a href="https://www.redhat.com/ja/topics/containers/what-is-skopeo" class="bare">https://www.redhat.com/ja/topics/containers/what-is-skopeo</a></p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -217,7 +218,7 @@
 <td class="content">
 <div class="paragraph">
 <p>ワークショップ環境では、すでにイメージレジストリが公開されているため、以下の手順は不要です。
-イメージレジストリに外部からアクセスできるようにするために、cluster-admin権限を持つユーザで以下のコマンドを実行します。</p>
+イメージレジストリに外部からアクセスできるようにするために、<strong>cluster-admin</strong> 権限を持つユーザで以下のコマンドを実行します。</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -225,7 +226,7 @@
 </div>
 </div>
 <div class="paragraph">
-<p>公開されたリポジトリのイメージ一覧を取得します。</p>
+<p>公開されたリポジトリのイメージ一覧を取得します。このコマンドの実行には <strong>cluster-admin</strong> 権限が必要です。</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -247,11 +248,61 @@ default-route-openshift-image-registry.apps.rosa.%SUBDOMAIN%
 </div>
 <div class="sect2">
 <h3 id="_ecr_リポジトリのtoken取得"><a class="anchor" href="#_ecr_リポジトリのtoken取得"></a>4.2. ECR リポジトリのToken取得</h3>
-
+<div class="paragraph">
+<p>共有メモに記載したトークンを利用してください。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>AWS CLI を利用してトークンを取得する場合は、以下のコマンドを実行します。</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">aws ecr get-login-password --region us-east-2</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_openshiftのtoken取得"><a class="anchor" href="#_openshiftのtoken取得"></a>4.3. OpenShiftのToken取得</h3>
-
+<div class="paragraph">
+<p>OpenShiftにCLIでログインしている場合は、<code>oc whoami -t</code> コマンドでトークンを取得できます。</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc whoami -t</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>OpenShiftコンソールからトークンを取得する場合は、以下の手順で取得します。</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>OpenShiftコンソールにログイン</p>
+</li>
+<li>
+<p>右上のユーザ名をクリック</p>
+</li>
+<li>
+<p>「ログインコマンドをコピー」をクリック</p>
+</li>
+<li>
+<p>%USERID% と openshift を入力してログイン</p>
+</li>
+<li>
+<p><code>Display Token</code> をクリック</p>
+</li>
+</ol>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_skopeo_を使ってコンテナイメージのコピー"><a class="anchor" href="#_skopeo_を使ってコンテナイメージのコピー"></a>4.4. Skopeo を使ってコンテナイメージのコピー</h3>
@@ -261,7 +312,8 @@ default-route-openshift-image-registry.apps.rosa.%SUBDOMAIN%
 <p>ECRにログイン</p>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">skopeo login --tls-verify=false -u AWS -p `aws ecr get-login-password --region us-east-2` %AWS_ACCOUNTID%.dkr.ecr.us-east-2.amazonaws.com</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export ECR_TOKEN=[ECRのトークン]
+skopeo login --tls-verify=false -u AWS -p $ECR_TOKEN %AWSACCOUNTID%.dkr.ecr.us-east-2.amazonaws.com</code></pre>
 </div>
 </div>
 </li>
@@ -269,31 +321,36 @@ default-route-openshift-image-registry.apps.rosa.%SUBDOMAIN%
 <p>OpenShiftのイメージレジストリにログイン</p>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export ROSA_USER=%USERID%
-export ROUTE=default-route-openshift-image-registry.apps.rosa.%SUBDOMAIN%
-export OPENSHIFT_API_URL=https://api.%SUBDOMAIN%:443
-
-oc login $OPENSHIFT_API_URL -u $ROSA_USER -p {password}
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc login https://api.%SUBDOMAIN%:443 -u %USERID% -p {password}
 export TOKEN=$(oc whoami -t)
-skopeo login --tls-verify=false -u $ROSA_USER -p $TOKEN $ROUTE</code></pre>
+skopeo login --tls-verify=false -u %USERID% -p $TOKEN default-route-openshift-image-registry.apps.rosa.%SUBDOMAIN%</code></pre>
 </div>
 </div>
 </li>
 </ol>
 </div>
 <div class="paragraph">
-<p>skopeo copy docker://$ROUTE/user02-app/containerapps-albumui docker://$AWS_ACCOUNTID.dkr.ecr.us-east-2.amazonaws.com/album/albumui:latest</p>
+<p>skopeo copy docker://default-route-openshift-image-registry.apps.rosa.%SUBDOMAIN%/%USERID%-app/albumui docker://%AWSACCOUNTID%.dkr.ecr.us-east-2.amazonaws.com/%USERID%/albumui:latest</p>
+</div>
+<div class="paragraph">
+<p><mark><mark></mark><mark></mark></mark>
+skopeo login --tls-verify=false -u AWS -p <code>aws ecr get-login-password --region us-east-2</code> 654654224671.dkr.ecr.us-east-2.amazonaws.com</p>
+</div>
+<div class="paragraph">
+<p>skopeo copy docker://default-route-openshift-image-registry.apps.rosa.rosa-lcghp.zs4d.p3.openshiftapps.com:443/user03-app/album-api:latest docker://654654224671.dkr.ecr.us-east-2.amazonaws.com/album/albumui:latest</p>
+</div>
+<div class="paragraph">
+<p><mark><mark></mark><mark></mark></mark></p>
 </div>
 <div class="paragraph">
 <p>コピー元、コピー先のリポジトリにログインしていない場合、credential を指定してコピーすることができます。</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc login [OpenShift API URL] -u $OCP_USER -p [パスワード]
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc login https://api.%SUBDOMAIN%:443 -u %USERID% -p {password}
 export TOKEN=$(oc whoami -t)
-export ROUTE=$(oc get route -n openshift-image-registry -o jsonpath='{.items[0].spec.host}')
-
-skopeo copy --src-creds $OCP_USER:$TOKEN docker://$ROUTE/%USERID%-app/albumui --dest-creds AWS:$ECR_TOKEN docker://654654224671.dkr.ecr.us-east-2.amazonaws.com/album/albumui:latest</code></pre>
+export ECR_TOKEN=[ECRのトークン]
+skopeo copy --src-creds %USERID%:$TOKEN docker://default-route-openshift-image-registry.apps.rosa.%SUBDOMAIN%/%USERID%-app/albumui --dest-creds AWS:$ECR_TOKEN docker://%AWSACCOUNTID%.dkr.ecr.us-east-2.amazonaws.com/album/albumui:latest</code></pre>
 </div>
 </div>
 </div>
@@ -323,7 +380,7 @@ skopeo copy --src-creds $OCP_USER:$TOKEN docker://$ROUTE/%USERID%-app/albumui --
 <div class="listingblock console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc create secret docker-registry ecr-secret --
-docker-server=$AWS_ACCOUNTID.dkr.ecr.us-east-2.amazonaws.com --docker-user
+docker-server=%AWSACCOUNTID%.dkr.ecr.us-east-2.amazonaws.com --docker-user
 name=AWS --docker-password=$(aws ecr get-login-password)</code></pre>
 </div>
 </div>
@@ -350,7 +407,7 @@ name=AWS --docker-password=$(aws ecr get-login-password)</code></pre>
 <li>
 <p>外部のイメージレジストリからのイメージ名でECRのURIを入力</p>
 <div class="paragraph">
-<p><code>[AWS_ACCOUNT_ID].dkr.ecr.us-east-2.amazonaws.com/album/albumui:latest</code></p>
+<p><code>%AWSACCOUNTID%.dkr.ecr.us-east-2.amazonaws.com/album/albumui:latest</code></p>
 </div>
 </li>
 <li>
@@ -367,8 +424,7 @@ name=AWS --docker-password=$(aws ecr get-login-password)</code></pre>
 <p>Deploymentのマニフェストファイルを作成して適用</p>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export AWS_ACCOUNTID=654654224671
-oc create deployment albumui --image=$AWS_ACCOUNTID.dkr.ecr.us-east-2.amazonaws.com/album/albumui:latest --dry-run=client -o yaml &gt; deployment-albumui.yaml
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc create deployment albumui --image=%AWSACCOUNTID%.dkr.ecr.us-east-2.amazonaws.com/album/albumui:latest --dry-run=client -o yaml &gt; deployment-albumui.yaml
 
 oc apply -f deployment-albumui.yaml</code></pre>
 </div>

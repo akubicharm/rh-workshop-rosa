@@ -7,6 +7,7 @@
 |ROSA コンソール| https://console-openshift-console.apps.rosa.%SUBDOMAIN%
 |ROSA API| https://api.%SUBDOMAIN%:443
 |OpenShift コンソール（オンプレ環境想定）| https://console-openshift-console.apps.xxx
+|AWS コンソール|https://%AWSACCOUNTID%.signin.aws.amazon.com/console 
 |===
 
 == OpenShiftコンソールのログイン
@@ -33,3 +34,7 @@ OpenShift コマンドラインターミナルの利用が可能です。最初�
 ----
 oc login -u %USERID% -p {password} https://api.%SUBDOMAIN%:443
 ----
+
+== skopeo のインストール
+
+https://www.redhat.com/ja/topics/containers/what-is-skopeo を参考にしてインストールしてください。

@@ -18,7 +18,8 @@ asciidoc:
     password: openshift
     app-project-name: albumapp
     image-albumui: quay.io/keomizo_redhat/albumui-nodejs
-    git-albumapi-java: \https://github.com/akubicharm/containerapps-albumapi-java
+    #git-albumapi-java: \https://github.com/akubicharm/containerapps-albumapi-java
+    git-albumapi-java: \https://gitea-gitea.apps.cluster-pqmg4.pqmg4.sandbox1915.opentlc.com
 ui:
   bundle:
 #   url: https://github.com/redhat-developer-demos/rhd-tutorial-ui/releases/download/v0.1.10/ui-bundle.zip

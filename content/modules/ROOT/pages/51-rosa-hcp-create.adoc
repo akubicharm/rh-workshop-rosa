@@ -216,7 +216,7 @@ ROSA HCPクラスターの作成コマンドを実行します。`version` オ�
 
 NOTE: このとき、指定するサブネットIDによって、SingleAZ構成とMultiAZ構成のどちらになるかが自動的に決まります。今まで実行してきたコマンド例だと、パブリック/プライベートサブネットIDを1つずつ指定することになるので、ワーカーノード2台のSingleAZ構成としてROSA HCPクラスターが作成されます。
 
-`--odic-config-id` には、先程実行した `rosa create oidc-config` コマンドの出力結果に表示されたoidc-config-idを指定します。
+`--odic-config-id` には、先程実行した `rosa create oidc-config` コマンドの出力結果に表示されたoidc-config-id (例:0ikrpnt0nv000c000trn00renuakl0mn) を指定します。
 
 ```
 export OIDC_CONFIG_ID=出力結果のoidc config id

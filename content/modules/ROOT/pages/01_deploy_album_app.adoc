@@ -56,8 +56,11 @@ Album APIアプリケーションは、実行時にバックエンドのPostgres
 . Builder Imageとして *OpenJDK17* が選択されていることを確認
 . 名前を `albumapi` に変更
 . リソースタイプが「Deployment」になっていることを確認
-. 「> 詳細なデプロイメントオプションの表示」をクリックして環境変数を入力。ここでSecretからDB接続情報を取得して環境変数として利用するように設定
+. 「> 詳細なデプロイメントオプションの表示」をクリックして環境変数を入力。バックエンドでPostgreSQを利用することと、SecretからDB接続情報を取得して環境変数として利用するように設定
 +
+* spring_datasource-urlの設定
+** 名前: `spring_profile_active`
+** 値: `postgresql`
 * JDBC URLの設定
 ** 「+ConfigMapまたはシークレットから追加」をクリック
 ** 名前：`POSTGRESQL_URL`

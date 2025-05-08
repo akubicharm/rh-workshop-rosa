@@ -325,11 +325,19 @@ curl -k -H "Authorization: Bearer $TOKEN" "https://$ROUTE/v2/_catalog" | jq</cod
 <p>ECRにログイン</p>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export ECR_TOKEN=[ECRのトークン]
-skopeo login --tls-verify=false -u AWS -p $ECR_TOKEN %AWSACCOUNTID%.dkr.ecr.us-east-2.amazonaws.com</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export ECR_TOKEN=[ECRのトークン]</code></pre>
 </div>
 </div>
 </li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>skopeo login --tls-verify=false -u AWS -p $ECR_TOKEN %AWSACCOUNTID%.dkr.ecr.us-east-2.amazonaws.com</pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
 <li>
 <p>OpenShiftのイメージレジストリにログイン</p>
 <div class="listingblock console-input">
@@ -340,10 +348,15 @@ skopeo login --tls-verify=false -u %USERID% -p $TOKEN default-route-openshift-im
 </div>
 </div>
 </li>
-</ol>
+<li>
+<p>OpenShiftのイメージレジストリからECRにコンテナイメージをコピー</p>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">skopeo copy docker://default-route-openshift-image-registry.apps.rosa.%SUBDOMAIN%/%USERID%-app/albumui docker://%AWSACCOUNTID%.dkr.ecr.us-east-2.amazonaws.com/%USERID%/albumui:latest</code></pre>
 </div>
-<div class="paragraph">
-<p>skopeo copy docker://default-route-openshift-image-registry.apps.rosa.%SUBDOMAIN%/%USERID%-app/albumui docker://%AWSACCOUNTID%.dkr.ecr.us-east-2.amazonaws.com/%USERID%/albumui:latest</p>
+</div>
+</li>
+</ol>
 </div>
 <div class="paragraph">
 <p>コピー元、コピー先のリポジトリにログインしていない場合、credential を指定してコピーすることができます。</p>

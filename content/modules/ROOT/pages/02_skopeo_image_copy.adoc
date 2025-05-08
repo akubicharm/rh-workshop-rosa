@@ -96,6 +96,10 @@ OpenShiftコンソールからトークンを取得する場合は、以下の�
 [source,bash]
 ----
 export ECR_TOKEN=[ECRのトークン]
+----
+[.console-input]
+[source,bash]
+----
 skopeo login --tls-verify=false -u AWS -p $ECR_TOKEN %AWSACCOUNTID%.dkr.ecr.us-east-2.amazonaws.com
 ----
 
@@ -108,8 +112,14 @@ oc login https://api.%SUBDOMAIN%:443 -u %USERID% -p {password}
 export TOKEN=$(oc whoami -t)
 skopeo login --tls-verify=false -u %USERID% -p $TOKEN default-route-openshift-image-registry.apps.rosa.%SUBDOMAIN%
 ----
-
++
+. OpenShiftのイメージレジストリからECRにコンテナイメージをコピー
++
+[.console-input]
+[source,bash]
+----
 skopeo copy docker://default-route-openshift-image-registry.apps.rosa.%SUBDOMAIN%/%USERID%-app/albumui docker://%AWSACCOUNTID%.dkr.ecr.us-east-2.amazonaws.com/%USERID%/albumui:latest
+----
 
 // ##########
 // skopeo login --tls-verify=false -u AWS -p `aws ecr get-login-password --region us-east-2` 654654224671.dkr.ecr.us-east-2.amazonaws.com

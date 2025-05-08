@@ -352,7 +352,7 @@ skopeo login --tls-verify=false -u %USERID% -p $TOKEN default-route-openshift-im
 <p>OpenShiftのイメージレジストリからECRにコンテナイメージをコピー</p>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">skopeo copy docker://default-route-openshift-image-registry.apps.rosa.%SUBDOMAIN%/%USERID%-app/albumui docker://%AWSACCOUNTID%.dkr.ecr.us-east-2.amazonaws.com/%USERID%/albumui:latest</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">skopeo copy docker://default-route-openshift-image-registry.apps.rosa.%SUBDOMAIN%/%USERID%-app/albumui-nodejs docker://%AWSACCOUNTID%.dkr.ecr.us-east-2.amazonaws.com/%USERID%/albumui:latest</code></pre>
 </div>
 </div>
 </li>

@@ -118,7 +118,7 @@ skopeo login --tls-verify=false -u %USERID% -p $TOKEN default-route-openshift-im
 [.console-input]
 [source,bash]
 ----
-skopeo copy docker://default-route-openshift-image-registry.apps.rosa.%SUBDOMAIN%/%USERID%-app/albumui docker://%AWSACCOUNTID%.dkr.ecr.us-east-2.amazonaws.com/%USERID%/albumui:latest
+skopeo copy docker://default-route-openshift-image-registry.apps.rosa.%SUBDOMAIN%/%USERID%-app/albumui-nodejs docker://%AWSACCOUNTID%.dkr.ecr.us-east-2.amazonaws.com/%USERID%/albumui:latest
 ----
 
 // ##########

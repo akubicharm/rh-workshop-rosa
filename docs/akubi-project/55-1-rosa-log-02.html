@@ -196,7 +196,7 @@
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-本演習をワークショップ形式で実施している場合、インストラクターが管理者アカウントを案内します。
+本演習をワークショップ形式で実施している場合、インストラクターが管理者アカウントを案内します。%USERID% とは異なるブラウザを利用することをお勧めします。
 </td>
 </tr>
 </table>
@@ -255,14 +255,14 @@
 kind: RoleBinding
 metadata:
   name: view-application-logs
-  namespace: test-project20
+  namespace: %USERID%-app
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: cluster-logging-application-view
 subjects:
 - kind: User
-  name: testuser20
+  name: %USERID%
   apiGroup: rbac.authorization.k8s.io</code></pre>
 </div>
 </div>

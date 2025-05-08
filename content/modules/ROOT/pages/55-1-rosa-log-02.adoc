@@ -11,7 +11,7 @@ include::_attributes.adoc[]
 
 OpenShiftコンソールでのログ集約を確認します。管理者アカウント( `cluster-admin` など)でログインして、左サイドメニューの「モニタリング」→「Logs」から確認できます。
 
-NOTE: 本演習をワークショップ形式で実施している場合、インストラクターが管理者アカウントを案内します。
+NOTE: 本演習をワークショップ形式で実施している場合、インストラクターが管理者アカウントを案内します。%USERID% とは異なるブラウザを利用することをお勧めします。
 
 image::rosa/log-02/console-logs.png[]
 
@@ -42,20 +42,20 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: view-application-logs
-  namespace: test-project20
+  namespace: %USERID%-app
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: cluster-logging-application-view
 subjects:
 - kind: User
-  name: testuser20
+  name: %USERID%
   apiGroup: rbac.authorization.k8s.io
 ----
 
 image::rosa/log-02/rolebinding.png[]
 
-RoleBindingリソースを作成したあとに `testuser20` ユーザーで再ログインしてみると、`test-project20` プロジェクトで作成されたアプリケーションに関するログ集約を確認できます。
+RoleBindingリソースを作成したあとに `%USERID%` ユーザーで再ログインしてみると、`%USERID%-app` プロジェクトで作成されたアプリケーションに関するログ集約を確認できます。
 
 image::rosa/log-02/localuser-logging.png[]
 

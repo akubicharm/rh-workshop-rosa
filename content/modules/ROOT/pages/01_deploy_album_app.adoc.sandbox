@@ -189,6 +189,8 @@ image::add_albumui_app_14.png[デプロイの確認]
 
 15. 「Unable to communicate with server」と画面に表示されることを確認
 +
+image::add_albumui_app_15.png[]
++
 [NOTE]
 ====
 この段階では、Album UIアプリから呼び出すREST APIのURLが設定されていないので、サーバに接続できないというエラーになる。

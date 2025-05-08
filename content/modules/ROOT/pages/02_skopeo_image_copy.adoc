@@ -6,14 +6,21 @@
 
 == ゴール
 
+OpenShiftの *s2i(Source to Image)* ビルドの機能使って作成された、OpenShiftの内部のイメージレジストリに登録されたコンテナイメージを外部のリポジトリにコピーします。
+
 == Skopeo
 
+Skopeoはコンテナイメージとイメージリポジトリの操作、検査、署名、転送を行うためのツールです。OSSのツールですがRed Hat Enterprise Linuxのサブスクリプションに含まれます。
+バイナリだけでなくコンテナイメージとしても提供されているので、様々なプラットフォームでりようが可能です。
+
+https://www.redhat.com/ja/topics/containers/what-is-skopeo
 
 
 == 準備 skopeo のインストール
 
-cli がインストールされていない場合は、以下の手順でインストールしてください。
-https://www.redhat.com/ja/topics/containers/what-is-skopeo
+RHEL 以外のプラットフォームでの利用はGithubで公開されているインストール手順に従ってください。
+https://github.com/containers/skopeo/blob/main/install.md
+
 
 
 == skopeo cli を使ったコンテナイメージのコピー

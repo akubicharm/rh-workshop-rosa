@@ -180,21 +180,29 @@
 <div class="sect1">
 <h2 id="_ゴール"><a class="anchor" href="#_ゴール"></a>1. ゴール</h2>
 <div class="sectionbody">
-
+<div class="paragraph">
+<p>OpenShiftの <strong>s2i(Source to Image)</strong> ビルドの機能使って作成された、OpenShiftの内部のイメージレジストリに登録されたコンテナイメージを外部のリポジトリにコピーします。</p>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_skopeo"><a class="anchor" href="#_skopeo"></a>2. Skopeo</h2>
 <div class="sectionbody">
-
+<div class="paragraph">
+<p>Skopeoはコンテナイメージとイメージリポジトリの操作、検査、署名、転送を行うためのツールです。OSSのツールですがRed Hat Enterprise Linuxのサブスクリプションに含まれます。
+バイナリだけでなくコンテナイメージとしても提供されているので、様々なプラットフォームでりようが可能です。</p>
+</div>
+<div class="paragraph">
+<p><a href="https://www.redhat.com/ja/topics/containers/what-is-skopeo" class="bare">https://www.redhat.com/ja/topics/containers/what-is-skopeo</a></p>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_準備_skopeo_のインストール"><a class="anchor" href="#_準備_skopeo_のインストール"></a>3. 準備 skopeo のインストール</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>cli がインストールされていない場合は、以下の手順でインストールしてください。
-<a href="https://www.redhat.com/ja/topics/containers/what-is-skopeo" class="bare">https://www.redhat.com/ja/topics/containers/what-is-skopeo</a></p>
+<p>RHEL 以外のプラットフォームでの利用はGithubで公開されているインストール手順に従ってください。
+<a href="https://github.com/containers/skopeo/blob/main/install.md" class="bare">https://github.com/containers/skopeo/blob/main/install.md</a></p>
 </div>
 </div>
 </div>

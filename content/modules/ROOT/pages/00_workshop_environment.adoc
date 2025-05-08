@@ -3,6 +3,12 @@
 :sectnums:
 :sectnumlevels: 4
 
+== 準備
+
+このガイドの右上の「Enter User ID」と薄く表示しているテキストフィールドにユーザID（例: user1）を入力してください。
+
+image::enter_your_workshop_env.png[userid]
+
 == ツールのインストール
 
 === OpenShift CLI のインストール

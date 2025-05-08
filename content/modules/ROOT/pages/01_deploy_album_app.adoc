@@ -13,7 +13,9 @@
 このハンズオンでは、コンテナイメージおよびGitリポジトリに保存されたソースコードを元にOpenShiftにアプリケーションをデプロイしていきます。
 OpenShiftのs2iビルドの機能を使ってYAMLファイルを作成することなく、OpenShiftにアプリケーションをデプロイできることを体験します。
 
-=== アプリケーションの構成
+=== アプリケーション
+
+image::app_structure.png[]
 
 == Postgresql のデプロイ
 
@@ -49,12 +51,18 @@ Album APIアプリケーションは、実行時にバックエンドのPostgres
 . 左上のパースペクティブで「開発者」モードを選択
 . 左のメニューで「+追加」をクリック
 . 右のメニューで「Gitリポジトリ - Gitからのインポート」をクリック
++
+image::add_albumapi_from_git.png[Gitリポジトリからのインポート]
++
 . GitリポジトリURLの情報を入力
 +
 {git-albumapi-java}/%USERID%/albumapi
 +
 . Builder Imageとして *OpenJDK17* が選択されていることを確認
-. 名前を `albumapi` に変更
++
+image::add_albumapi_strategy.png[s2istrategy]
++
+. 名前を `albumapi` になっていることを確認（後のでこの名前を使います）
 . リソースタイプが「Deployment」になっていることを確認
 . 「> 詳細なデプロイメントオプションの表示」をクリックして環境変数を入力。バックエンドでPostgreSQを利用することと、SecretからDB接続情報を取得して環境変数として利用するように設定
 +
@@ -79,6 +87,9 @@ Album APIアプリケーションは、実行時にバックエンドのPostgres
 +
 . 詳細オプションのターゲットポートが `8080` になっていることを確認
 . route の作成にチェックが入っていることを確認
++
+image::add_albumapi_env.png[env]
++
 
 [NOTE]
 ====
@@ -91,7 +102,7 @@ Album APIアプリケーションは、実行時にバックエンドのPostgres
 デプロイが完了したら、ブラウザでalbum-apiのURLを開きます。
 
 . トポロジービューでアプリケーションがデプロイされていることを確認
-. URLを開くボタンをクリック
+. URLを開くボタンをクリック または https://albumapi-%USERID%-app.apps.rosa.%SUBDOMAIN%/
 . 「Please visit /albums to see a list of albums.」と表示されているのでコンテキストパスに `/albums` を追加してURLを開く
 . 以下のようなJSON形式のデータが表示されることを確認
 
@@ -156,18 +167,29 @@ Album APIアプリケーションは、実行時にバックエンドのPostgres
 . 左上のパースペクティブで「開発者」モードを選択
 . 左のメニューで「+追加」をクリック
 . 右のメニューで「コンテナイメージ」をクリック
++
+image::add_albumui_from_image.png[コンテナイメージ]
++
 . イメージセクションの「外部レジストリーからのイメージ名」を選択し、イメージのURL「 {image-albumui} 」と入力
 + 
 URLのチェックが終わると「検証済み」になります
++
+image::add_albumui_image_url.png[コンテナイメージ]
++
 +
 . リソースタイプが「Deployment」になっていることを確認
 . 詳細オプションセクションのターゲットポートが `8080` になっていることを確認
 . route の作成にチェックが入っていることを確認
 . 画面下部の「作成」ボタンをクリック
 . トポロジービューでアプリケーションがデプロイされていることを確認（濃い青線ならばOK）
-. URLを開くボタンをクリック
+. URLを開くボタンをクリック または https://albumui-nodejs-%USERID%-app.apps.rosa.%SUBDOMAIN%/ にアクセス
++
+image::add_albumui_open_url.png[URLを開く]
++
 . 「Unable to communicate with server」と画面に表示されていることを確認
 +
+image::add_albumui_not_connected.png[アプリのビュー]
+
 [NOTE]
 ====
 この段階では、Album UIアプリから呼び出すREST APIのURLが設定されていないので、サーバに接続できないというエラーになります。
@@ -198,8 +220,12 @@ Deploymentを編集して環境変数として `API_BASE_URL` を指定してい
 |===
 +
 . 「保存」ボタンをクリック
-
++
 Deploymentが更新されるとPodが再起動されます。再起動後にPodに環境変数が設定されていることを確認してください。
++
+. ブラウザをリロードしてalbum-apiと接続できていることを確認
++
+image::add_albumui_connected.png[アプリのビュー]
 
 
 === Configmapで設定
@@ -224,8 +250,12 @@ Deploymentが更新されるとPodが再起動されます。再起動後にPod�
 |===
 +
 . 「保存」ボタンをクリック
-
++
 Deploymentが更新されるとPodが再起動されます。再起動後にPodに環境変数が設定されていることを確認してください。
++
+. ブラウザをリロードしてalbum-apiと接続できていることを確認
++
+image::add_albumui_connected.png[アプリのビュー]
 
 
 [NOTE]
@@ -239,6 +269,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: albumui-config
+  namespace: %USERID%-app
 data:
   API_BASE_URL: http://albumapi:8080
 immutable: false

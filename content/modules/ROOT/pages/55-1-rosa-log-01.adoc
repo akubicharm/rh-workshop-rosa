@@ -5,6 +5,8 @@ include::_attributes.adoc[]
 == デモの概要
 このモジュールでは、インストラクターがROSAクラスターのロギング設定方法をご紹介します。
 
+https://www.youtube.com/watch?v=BXVjcAMwMNE[Loki Logging設定の動画]
+
 ---
 NOTE: 本演習を自習している時以外、ROSAクラスターのロギング設定を実行しないで下さい。
 

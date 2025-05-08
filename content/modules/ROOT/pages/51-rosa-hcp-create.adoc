@@ -7,6 +7,8 @@ include::_attributes.adoc[]
 == デモの概要
 このモジュールでは、インストラクターがROSA HCPクラスター作成方法の概要をご紹介します。
 
+video::hTFk8inWe90[youtube]
+
 ---
 
 === 前準備

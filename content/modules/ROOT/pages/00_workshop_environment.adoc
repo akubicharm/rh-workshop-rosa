@@ -9,6 +9,14 @@
 
 image::enter_your_workshop_env.png[userid]
 
+このような表示になればOKです。入力するUserIDを間違えてしまった場合は、HTTPクエリパラメータ「USERID=user1」の部分を修正してください。
+
+image::lab_verify_userid.png[userid]
+
+ガイドを少し下にスクロールして、ROSA APIのURLとAWSコンソールのURLが、この図のような書式になっているか確認してください。
+
+image::lab_verify_subdomain.png[]
+
 == ツールのインストール
 
 === OpenShift CLI のインストール

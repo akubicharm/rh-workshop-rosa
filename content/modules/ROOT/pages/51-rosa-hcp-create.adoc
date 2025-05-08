@@ -379,7 +379,10 @@ workers  No           2/2       m5.xlarge                          us-east-2a   
 
 NOTE: OCMは、OpenShiftクラスターのインストール、
 修正、操作、およびアップグレードを可能にするRed Hat提供の管理サービスです。
-OCMを使用すると、単一のダッシュボードからすべてのOpenShiftクラスターを操作できるようになります。詳細については、
+OCMを使用すると、単一のダッシュボードからすべてのOpenShiftクラスターを操作できるようになります。
+https://console.redhat.com/openshift[OpenShift Hybid Console]
+
+詳細については、
 https://access.redhat.com/documentation/ja-jp/red_hat_openshift_service_on_aws/4/html-single/red_hat_openshift_cluster_manager/index[OCMの公式ドキュメント]をご参照ください。
 
 image::rosa/hcp-create/singleaz01.png[]

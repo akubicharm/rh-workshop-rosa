@@ -251,7 +251,7 @@ curl -k -H "Authorization: Bearer $TOKEN" "https://$ROUTE/v2/_catalog" | jq</cod
 <div class="sect2">
 <h3 id="_ecr_リポジトリのtoken取得"><a class="anchor" href="#_ecr_リポジトリのtoken取得"></a>4.2. ECR リポジトリのToken取得</h3>
 <div class="paragraph">
-<p>共有メモに記載したトークンを利用してください。</p>
+<p>講師が共有メモに記載したトークンを利用してください。</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -276,13 +276,20 @@ curl -k -H "Authorization: Bearer $TOKEN" "https://$ROUTE/v2/_catalog" | jq</cod
 <div class="sect2">
 <h3 id="_openshiftのtoken取得"><a class="anchor" href="#_openshiftのtoken取得"></a>4.3. OpenShiftのToken取得</h3>
 <div class="paragraph">
-<p>OpenShiftにCLIでログインしている場合は、<code>oc whoami -t</code> コマンドでトークンを取得できます。</p>
+<p>OpenShift ターミナルではなく、skopeoが実行できるターミナルでOpenShiftにCLIでログインして実行します。</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc whoami -t</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc login https://api.%SUBDOMAIN%:443 -u %USERID% -p openshift</code></pre>
 </div>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
 <div class="paragraph">
 <p>OpenShiftコンソールからトークンを取得する場合は、以下の手順で取得します。</p>
 </div>
@@ -304,6 +311,10 @@ curl -k -H "Authorization: Bearer $TOKEN" "https://$ROUTE/v2/_catalog" | jq</cod
 <p><code>Display Token</code> をクリック</p>
 </li>
 </ol>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -333,16 +344,6 @@ skopeo login --tls-verify=false -u %USERID% -p $TOKEN default-route-openshift-im
 </div>
 <div class="paragraph">
 <p>skopeo copy docker://default-route-openshift-image-registry.apps.rosa.%SUBDOMAIN%/%USERID%-app/albumui docker://%AWSACCOUNTID%.dkr.ecr.us-east-2.amazonaws.com/%USERID%/albumui:latest</p>
-</div>
-<div class="paragraph">
-<p><mark><mark></mark><mark></mark></mark>
-skopeo login --tls-verify=false -u AWS -p <code>aws ecr get-login-password --region us-east-2</code> 654654224671.dkr.ecr.us-east-2.amazonaws.com</p>
-</div>
-<div class="paragraph">
-<p>skopeo copy docker://default-route-openshift-image-registry.apps.rosa.rosa-lcghp.zs4d.p3.openshiftapps.com:443/user03-app/album-api:latest docker://654654224671.dkr.ecr.us-east-2.amazonaws.com/album/albumui:latest</p>
-</div>
-<div class="paragraph">
-<p><mark><mark></mark><mark></mark></mark></p>
 </div>
 <div class="paragraph">
 <p>コピー元、コピー先のリポジトリにログインしていない場合、credential を指定してコピーすることができます。</p>

@@ -54,7 +54,7 @@ default-route-openshift-image-registry.apps.rosa.%SUBDOMAIN%
 
 === ECR リポジトリのToken取得
 
-共有メモに記載したトークンを利用してください。
+講師が共有メモに記載したトークンを利用してください。
 
 [NOTE]
 ====
@@ -69,14 +69,16 @@ aws ecr get-login-password --region us-east-2
 
 === OpenShiftのToken取得
 
-OpenShiftにCLIでログインしている場合は、`oc whoami -t` コマンドでトークンを取得できます。
+OpenShift ターミナルではなく、skopeoが実行できるターミナルでOpenShiftにCLIでログインして実行します。
 
 [.console-input]
 [source,bash]
 ----
-oc whoami -t
+oc login https://api.%SUBDOMAIN%:443 -u %USERID% -p openshift
 ----
 
+[NOTE]
+====
 OpenShiftコンソールからトークンを取得する場合は、以下の手順で取得します。
 
 . OpenShiftコンソールにログイン
@@ -84,7 +86,7 @@ OpenShiftコンソールからトークンを取得する場合は、以下の�
 . 「ログインコマンドをコピー」をクリック
 . %USERID% と {password} を入力してログイン
 . `Display Token` をクリック
-
+====
 
 === Skopeo を使ってコンテナイメージのコピー
 
@@ -109,12 +111,12 @@ skopeo login --tls-verify=false -u %USERID% -p $TOKEN default-route-openshift-im
 
 skopeo copy docker://default-route-openshift-image-registry.apps.rosa.%SUBDOMAIN%/%USERID%-app/albumui docker://%AWSACCOUNTID%.dkr.ecr.us-east-2.amazonaws.com/%USERID%/albumui:latest
 
-##########
-skopeo login --tls-verify=false -u AWS -p `aws ecr get-login-password --region us-east-2` 654654224671.dkr.ecr.us-east-2.amazonaws.com
+// ##########
+// skopeo login --tls-verify=false -u AWS -p `aws ecr get-login-password --region us-east-2` 654654224671.dkr.ecr.us-east-2.amazonaws.com
 
-skopeo copy docker://default-route-openshift-image-registry.apps.rosa.rosa-lcghp.zs4d.p3.openshiftapps.com:443/user03-app/album-api:latest docker://654654224671.dkr.ecr.us-east-2.amazonaws.com/album/albumui:latest
+// skopeo copy docker://default-route-openshift-image-registry.apps.rosa.rosa-lcghp.zs4d.p3.openshiftapps.com:443/user03-app/album-api:latest docker://654654224671.dkr.ecr.us-east-2.amazonaws.com/album/albumui:latest
 
-##########
+// ##########
 
 コピー元、コピー先のリポジトリにログインしていない場合、credential を指定してコピーすることができます。
 

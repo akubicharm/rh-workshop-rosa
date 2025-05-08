@@ -29,6 +29,7 @@ https://www.redhat.com/ja/topics/containers/what-is-skopeo を参考にしてイ
 |ROSA API| https://api.%SUBDOMAIN%:443
 |OpenShift コンソール（オンプレ環境想定）| https://console-openshift-console.apps.xxx
 |AWS コンソール|https://%AWSACCOUNTID%.signin.aws.amazon.com/console 
+|Gitリポジトリ| ワークショップの共有メモを参照してください
 |===
 
 === OpenShiftコンソールのログイン

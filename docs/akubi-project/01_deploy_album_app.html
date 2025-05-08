@@ -189,8 +189,12 @@
 OpenShiftのs2iビルドの機能を使ってYAMLファイルを作成することなく、OpenShiftにアプリケーションをデプロイできることを体験します。</p>
 </div>
 <div class="sect2">
-<h3 id="_アプリケーションの構成"><a class="anchor" href="#_アプリケーションの構成"></a>1.1. アプリケーションの構成</h3>
-
+<h3 id="_アプリケーション"><a class="anchor" href="#_アプリケーション"></a>1.1. アプリケーション</h3>
+<div class="imageblock">
+<div class="content">
+<img src="_images/app_structure.png" alt="app structure">
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -240,6 +244,11 @@ oc get pods -w</code></pre>
 </li>
 <li>
 <p>右のメニューで「Gitリポジトリ - Gitからのインポート」をクリック</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/add_albumapi_from_git.png" alt="Gitリポジトリからのインポート">
+</div>
+</div>
 </li>
 <li>
 <p>GitリポジトリURLの情報を入力</p>
@@ -249,9 +258,14 @@ oc get pods -w</code></pre>
 </li>
 <li>
 <p>Builder Imageとして <strong>OpenJDK17</strong> が選択されていることを確認</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/add_albumapi_strategy.png" alt="s2istrategy">
+</div>
+</div>
 </li>
 <li>
-<p>名前を <code>albumapi</code> に変更</p>
+<p>名前を <code>albumapi</code> になっていることを確認（後のでこの名前を使います）</p>
 </li>
 <li>
 <p>リソースタイプが「Deployment」になっていることを確認</p>
@@ -338,8 +352,10 @@ oc get pods -w</code></pre>
 </li>
 <li>
 <p>route の作成にチェックが入っていることを確認</p>
-</li>
-</ol>
+<div class="imageblock">
+<div class="content">
+<img src="_images/add_albumapi_env.png" alt="env">
+</div>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -355,6 +371,9 @@ oc get pods -w</code></pre>
 </tr>
 </table>
 </div>
+</li>
+</ol>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -369,7 +388,7 @@ oc get pods -w</code></pre>
 <p>トポロジービューでアプリケーションがデプロイされていることを確認</p>
 </li>
 <li>
-<p>URLを開くボタンをクリック</p>
+<p>URLを開くボタンをクリック または <a href="https://albumapi-%USERID%-app.apps.rosa.%SUBDOMAIN%/" class="bare">https://albumapi-%USERID%-app.apps.rosa.%SUBDOMAIN%/</a></p>
 </li>
 <li>
 <p>「Please visit /albums to see a list of albums.」と表示されているのでコンテキストパスに <code>/albums</code> を追加してURLを開く</p>
@@ -451,11 +470,21 @@ oc get pods -w</code></pre>
 </li>
 <li>
 <p>右のメニューで「コンテナイメージ」をクリック</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/add_albumui_from_image.png" alt="コンテナイメージ">
+</div>
+</div>
 </li>
 <li>
 <p>イメージセクションの「外部レジストリーからのイメージ名」を選択し、イメージのURL「 quay.io/keomizo_redhat/albumui-nodejs 」と入力</p>
 <div class="paragraph">
 <p>URLのチェックが終わると「検証済み」になります</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/add_albumui_image_url.png" alt="コンテナイメージ">
+</div>
 </div>
 </li>
 <li>
@@ -474,10 +503,23 @@ oc get pods -w</code></pre>
 <p>トポロジービューでアプリケーションがデプロイされていることを確認（濃い青線ならばOK）</p>
 </li>
 <li>
-<p>URLを開くボタンをクリック</p>
+<p>URLを開くボタンをクリック または <a href="https://albumui-nodejs-%USERID%-app.apps.rosa.%SUBDOMAIN%/" class="bare">https://albumui-nodejs-%USERID%-app.apps.rosa.%SUBDOMAIN%/</a> にアクセス</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/add_albumui_open_url.png" alt="URLを開く">
+</div>
+</div>
 </li>
 <li>
 <p>「Unable to communicate with server」と画面に表示されていることを確認</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/add_albumui_not_connected.png" alt="アプリのビュー">
+</div>
+</div>
+</li>
+</ol>
+</div>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -491,9 +533,6 @@ oc get pods -w</code></pre>
 </td>
 </tr>
 </table>
-</div>
-</li>
-</ol>
 </div>
 </div>
 </div>
@@ -553,11 +592,19 @@ oc get pods -w</code></pre>
 </li>
 <li>
 <p>「保存」ボタンをクリック</p>
-</li>
-</ol>
-</div>
 <div class="paragraph">
 <p>Deploymentが更新されるとPodが再起動されます。再起動後にPodに環境変数が設定されていることを確認してください。</p>
+</div>
+</li>
+<li>
+<p>ブラウザをリロードしてalbum-apiと接続できていることを確認</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/add_albumui_connected.png" alt="アプリのビュー">
+</div>
+</div>
+</li>
+</ol>
 </div>
 </div>
 <div class="sect2">
@@ -621,11 +668,19 @@ oc get pods -w</code></pre>
 </li>
 <li>
 <p>「保存」ボタンをクリック</p>
-</li>
-</ol>
-</div>
 <div class="paragraph">
 <p>Deploymentが更新されるとPodが再起動されます。再起動後にPodに環境変数が設定されていることを確認してください。</p>
+</div>
+</li>
+<li>
+<p>ブラウザをリロードしてalbum-apiと接続できていることを確認</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/add_albumui_connected.png" alt="アプリのビュー">
+</div>
+</div>
+</li>
+</ol>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -643,6 +698,7 @@ oc get pods -w</code></pre>
 kind: ConfigMap
 metadata:
   name: albumui-config
+  namespace: %USERID%-app
 data:
   API_BASE_URL: http://albumapi:8080
 immutable: false</code></pre>

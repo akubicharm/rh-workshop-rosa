@@ -29,11 +29,11 @@ image::rosa/log-02/forbidden.png[]
 
 そこで、管理者アカウントでローカルユーザーに対するログ集約の参照権限を付与してみます。
 
-管理者アカウントで再ログインして、OpenShiftコンソール右上の「+」ボタンから以下のYAMLをインポートします。このYAMLでは `view-application-logs` というRoleBindingリソースを `test-project20` プロジェクトに作っています。
+管理者アカウントで再ログインして、OpenShiftコンソール右上の「+」ボタンから以下のYAMLをインポートします。このYAMLでは `view-application-logs` というRoleBindingリソースを %USERID%-app プロジェクトに作っています。
 
-ユーザーとして `testuser20` も指定しているので `testuser20` ユーザーが `test-project20` プロジェクト上に作られたアプリケーションに関するログ集約を、OpenShiftコンソール上で見れるようになります。
+ユーザーとして %USERID% も指定しているので %USERID% ユーザーが %USERID%-app プロジェクト上に作られたアプリケーションに関するログ集約を、OpenShiftコンソール上で見れるようになります。
 
-NOTE: このYAMLの `testuser20` と `test-project20` については、自分が使っているユーザー名とプロジェクト名に適宜変更してください。
+NOTE: このYAMLの `metadata.namespace` と `Subject.kind.name` については、自分が使っているプロジェクト名とユーザ名に適宜変更してください。
 
 [.console-input]
 [source,sh]

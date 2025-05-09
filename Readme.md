@@ -62,10 +62,10 @@ export repo_name='test1/albumui'
    --region us-east-2
 
 {
-   "Sid": "labuser-statement",
+   "Sid": "test1-statement",
   "Effect": "Allow",
   "Principal": {
-    "AWS": "arn:aws:iam::714932348383:group/labusers"
+    "AWS": "arn:aws:iam::714932348383:user/test1"
   },
   "Action": [
     "ecr:*"
@@ -76,12 +76,12 @@ export repo_name='test1/albumui'
 ユーザごとに設定する時
 ```json
 {
+    "Sid": "user1-statement",
     "Effect": "Allow",
     "Principal": {
         "AWS": "arn:aws:iam::[AWS ACCOUNT ID]:user/user1",
     },
-    "Action": "ecr:*",
-    "Resource": "arn:aws:ecr:us-east-2:[AWS ACCOUNT ID]:repository/*"
+    "Action": "ecr:*"
 }
 ```
 

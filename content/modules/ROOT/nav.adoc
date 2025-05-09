@@ -10,3 +10,5 @@
 * xref:55-4-rosa-alert.adoc[9. アラート設定]
 * xref:56-rosa-nodes.adoc[10. デモ：ワーカーノードの追加と削除]
 * xref:57-rosa-upgrade.adoc[11. デモ：ROSA HCPクラスターのアップグレード]
+
+* xref:attachment$rh-workshop-rosa.pdf[PDF版ガイドのダウンロード]

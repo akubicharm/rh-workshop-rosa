@@ -17,6 +17,17 @@ image::lab_verify_userid.png[userid]
 
 image::lab_verify_subdomain.png[]
 
+== 自習で演習を利用する場合
+
+このガイドのURLのHTTPクエリーパラメータに、ROSAのサブドメインとAWSアカウントIDを指定することでコンテンツにそれらを反映することができます。
+
+|===
+|パラメータ名|説明|例
+|USERID|ワークショップのユーザID|user1
+|SUBDOMAIN|ROSAのサブドメイン（console-openshift-console.apps.rosa 以降）|example.com
+|AWSACCOUNTID|AWSアカウントID|123456789012
+|===
+
 == ツールのインストール
 
 === OpenShift CLI のインストール
@@ -37,7 +48,7 @@ https://www.redhat.com/ja/topics/containers/what-is-skopeo を参考にしてイ
 |ROSA API| https://api.%SUBDOMAIN%:443
 |OpenShift コンソール（オンプレ環境想定）| https://console-openshift-console.apps.xxx
 |AWS コンソール|https://%AWSACCOUNTID%.signin.aws.amazon.com/console 
-|Gitリポジトリ| ワークショップの共有メモを参照してください
+|Gitリポジトリ| ワークショップの共有メモを参照してください。自習の場合は `https://github.com/akubicharm/containerapps-albumapi-java/tree/main` をimportやcloneするなどして使ってください。
 |===
 
 === OpenShiftコンソールのログイン

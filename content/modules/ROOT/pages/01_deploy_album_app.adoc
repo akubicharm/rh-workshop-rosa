@@ -210,7 +210,7 @@ Album UI アプリケーションはバックエンドサービスのURLを `API
 
 Deploymentを編集して環境変数として `API_BASE_URL` を指定していきます。
 
-. トポロジービューで 「(D)album-ui」 をクリック
+. トポロジービューで 「(D)albumui-nodejs」 をクリック
 . 右Paneの「アクション」プルダウンメニューで「Deploymentの編集」をクリック
 . 「環境変数」にバックエンドのURLを指定
 +

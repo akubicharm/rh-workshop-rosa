@@ -210,10 +210,47 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="_ツールのインストール"><a class="anchor" href="#_ツールのインストール"></a>2. ツールのインストール</h2>
+<h2 id="_自習で演習を利用する場合"><a class="anchor" href="#_自習で演習を利用する場合"></a>2. 自習で演習を利用する場合</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>このガイドのURLのHTTPクエリーパラメータに、ROSAのサブドメインとAWSアカウントIDを指定することでコンテンツにそれらを反映することができます。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">パラメータ名</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">説明</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">例</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">USERID</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ワークショップのユーザID</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">user1</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SUBDOMAIN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ROSAのサブドメイン（console-openshift-console.apps.rosa 以降）</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">example.com</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AWSACCOUNTID</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AWSアカウントID</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">123456789012</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ツールのインストール"><a class="anchor" href="#_ツールのインストール"></a>3. ツールのインストール</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_openshift_cli_のインストール"><a class="anchor" href="#_openshift_cli_のインストール"></a>2.1. OpenShift CLI のインストール</h3>
+<h3 id="_openshift_cli_のインストール"><a class="anchor" href="#_openshift_cli_のインストール"></a>3.1. OpenShift CLI のインストール</h3>
 <div class="paragraph">
 <p>演習環境が利用可能でない場合は、 <a href="https://docs.redhat.com/ja/documentation/openshift_container_platform/4.18/html/cli_tools/openshift-cli-oc#cli-installing-cli_cli-developer-commands" class="bare">https://docs.redhat.com/ja/documentation/openshift_container_platform/4.18/html/cli_tools/openshift-cli-oc#cli-installing-cli_cli-developer-commands</a> に従ってインストールしてください。</p>
 </div>
@@ -222,7 +259,7 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_skopeo_のインストール"><a class="anchor" href="#_skopeo_のインストール"></a>2.2. skopeo のインストール</h3>
+<h3 id="_skopeo_のインストール"><a class="anchor" href="#_skopeo_のインストール"></a>3.2. skopeo のインストール</h3>
 <div class="paragraph">
 <p><a href="https://www.redhat.com/ja/topics/containers/what-is-skopeo" class="bare">https://www.redhat.com/ja/topics/containers/what-is-skopeo</a> を参考にしてインストールしてください。</p>
 </div>
@@ -230,7 +267,7 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="_各種環境のurlとログイン方法"><a class="anchor" href="#_各種環境のurlとログイン方法"></a>3. 各種環境のURLとログイン方法</h2>
+<h2 id="_各種環境のurlとログイン方法"><a class="anchor" href="#_各種環境のurlとログイン方法"></a>4. 各種環境のURLとログイン方法</h2>
 <div class="sectionbody">
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -256,12 +293,12 @@
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Gitリポジトリ</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ワークショップの共有メモを参照してください</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ワークショップの共有メモを参照してください。自習の場合は <code><a href="https://github.com/akubicharm/containerapps-albumapi-java/tree/main" class="bare">https://github.com/akubicharm/containerapps-albumapi-java/tree/main</a></code> をimportやcloneするなどして使ってください。</p></td>
 </tr>
 </tbody>
 </table>
 <div class="sect2">
-<h3 id="_openshiftコンソールのログイン"><a class="anchor" href="#_openshiftコンソールのログイン"></a>3.1. OpenShiftコンソールのログイン</h3>
+<h3 id="_openshiftコンソールのログイン"><a class="anchor" href="#_openshiftコンソールのログイン"></a>4.1. OpenShiftコンソールのログイン</h3>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -277,7 +314,7 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_openshift_コマンドラインターミナルの利用"><a class="anchor" href="#_openshift_コマンドラインターミナルの利用"></a>3.2. OpenShift コマンドラインターミナルの利用</h3>
+<h3 id="_openshift_コマンドラインターミナルの利用"><a class="anchor" href="#_openshift_コマンドラインターミナルの利用"></a>4.2. OpenShift コマンドラインターミナルの利用</h3>
 <div class="paragraph">
 <p>OpenShift コマンドラインターミナルの利用が可能です。最初に利用するときにはコマンドラインターミナルのPodを実行するためのプロジェクトを一つ作成します。</p>
 </div>
@@ -296,7 +333,7 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="_ローカル環境でのopenshift_cliの利用"><a class="anchor" href="#_ローカル環境でのopenshift_cliの利用"></a>3.3. ローカル環境でのOpenShift CLIの利用</h3>
+<h3 id="_ローカル環境でのopenshift_cliの利用"><a class="anchor" href="#_ローカル環境でのopenshift_cliの利用"></a>4.3. ローカル環境でのOpenShift CLIの利用</h3>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
